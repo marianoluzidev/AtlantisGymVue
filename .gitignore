@@ -35,6 +35,9 @@ node_modules/
 Thumbs.db
 
 
+/src/js/firebase.js
+/src/js/firebase copy.js
+
 
 
 
