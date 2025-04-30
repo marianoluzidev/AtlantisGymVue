@@ -33,4 +33,184 @@
   .fondo-amarillo {
     background-color: #FFD700; /* Amarillo dorado */
   }
+
+  .yellow-bg {
+    background-color: #ffcc00;
+  }
+  .padding {
+    padding: 16px;
+  }
+  .motivational-banner {
+    position: relative;
+    height: 100px;
+    background: black;
+  }
+  
+  .motivational-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.4;
+  }
+  .motivational-banner .quote {
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    text-align: left;
+    line-height: 1.2;
+  }
+  .cliente-datos {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+    flex-wrap: wrap; /* Para que se acomode bien en pantallas pequeñas */
+  }
+  
+  .cliente-datos .dato {
+    background: #fff;
+    color: #000;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  .cuota-card {
+    margin: 0px;
+  }
+  .text-black {
+    color: black !important;
+  }
+  .bienvenida {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #000;
+    margin-bottom: 12px;
+  }
+  
+  .cuerpo {
+    margin-left: 12px;
+    margin-right: 12px;
+    background-color: #ffcc00;
+  }
+  .home {
+    background-color:#ffcc00;
+  }
+  
+  .bienvenida-cliente {
+    background-color: #ffcc00; /* amarillo */
+    padding: 20px 16px;
+    font-family: 'Montserrat', sans-serif;
+    color: #000;
+    text-align: center;
+  }
+  
+  .bienvenida-cliente h2 {
+    font-size: 22px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin: 0 0 12px 0;
+  }
+  
+  .info-cliente {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  
+  .info-box {
+    text-align: center;
+    margin: 4px 8px;
+  }
+  
+  .info-label {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 2px;
+  }
+  
+  .info-value {
+    font-size: 14px;
+  }
+  .estado-cuota {
+    background-color: #ffcc00; /* Fondo amarillo Atlantis */
+    padding: 20px 16px;
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  .cuota-card {
+    background-color: #f2f2f2; /* Gris claro */
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .cuota-estado {
+    font-size: 18px;
+    font-weight: 800;
+    color: #000;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  
+  .btn-pagar {
+    background-color: #ffcc00;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 0;
+    width: 100%;
+    font-weight: 700;
+    font-size: 16px;
+    color: #000;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-pagar:hover {
+    background-color: #e6b800;
+  }
+  
+  .rutina-fixed {
+    position: fixed;
+    bottom: 56px; /* deja espacio para tab bar si tenés */
+    width: 100%;
+    z-index: 10;
+  }
+  
+  .rutina-section {
+    background-color: #ffcc00;
+    padding: 16px;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+  }
+  
+  .rutina-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 20px;
+  }
+  
+  .rutina-title {
+    font-weight: 800;
+    font-size: 18px;
+    color: #000;
+    text-transform: uppercase;
+  }
+  
+  .rutina-link {
+    font-size: 14px;
+    color: #000;
+    margin-top: 4px;
+  }
+  
+  .arrow {
+    font-size: 30px;
+    font-weight: bold;
+    color: #000;
+  }
   
