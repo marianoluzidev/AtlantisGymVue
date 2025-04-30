@@ -1,0 +1,19 @@
+{
+  "cwd": "C:\\angular_proj\\AtlantisGym",
+  "type": [
+    "pwa",
+    "web"
+  ],
+  "name": "AtlantisGym",
+  "framework": "vue",
+  "template": "tabs",
+  "cssPreProcessor": false,
+  "bundler": "vite",
+  "theming": {
+    "customColor": true,
+    "color": "#000000",
+    "darkMode": false,
+    "iconFonts": true
+  },
+  "customBuild": false
+}

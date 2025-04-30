@@ -1,0 +1,36 @@
+:root {
+    --f7-theme-color: #FFD700; /* Amarillo */
+    --f7-text-color: #000000;
+    --f7-page-bg-color: #a7a7a7; /* Negro */
+  }  
+  
+  body {
+    background-color: var(--f7-page-bg-color);
+    color: var(--f7-text-color);
+  }
+
+
+
+  /* Fondo del navbar */
+.navbar-bg {
+    background-color: #000000 !important; /* Fondo negro verdadero */
+  }
+  
+  /* Color del texto (título y botones) */
+  .navbar .title,
+  .navbar .link,
+  .navbar .left,
+  .navbar .right,
+  .navbar .back span {
+    color: #FFD700 !important; /* Amarillo dorado */
+  }
+
+  .btn-negro-sobre-amarillo {
+    background-color: #FFD700; /* amarillo dorado */
+    color: #000000;            /* texto negro */
+  }
+
+  .fondo-amarillo {
+    background-color: #FFD700; /* Amarillo dorado */
+  }
+  
