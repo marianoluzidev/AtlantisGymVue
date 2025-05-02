@@ -1,7 +1,7 @@
+
 :root {
-    --f7-theme-color: #FFD700; /* Amarillo */
+    --f7-theme-color-amarillo: #ffcc00; /* Amarillo */
     --f7-text-color: #000000;
-    --f7-page-bg-color: #a7a7a7; /* Negro */
   }  
   
   body {
@@ -22,24 +22,9 @@
   .navbar .left,
   .navbar .right,
   .navbar .back span {
-    color: #FFD700 !important; /* Amarillo dorado */
+    color: var(--f7-theme-color-amarillo) !important; /* Amarillo dorado */
   }
 
-  .btn-negro-sobre-amarillo {
-    background-color: #FFD700; /* amarillo dorado */
-    color: #000000;            /* texto negro */
-  }
-
-  .fondo-amarillo {
-    background-color: #FFD700; /* Amarillo dorado */
-  }
-
-  .yellow-bg {
-    background-color: #ffcc00;
-  }
-  .padding {
-    padding: 16px;
-  }
   .motivational-banner {
     position: relative;
     height: 100px;
@@ -77,6 +62,7 @@
     font-size: 14px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   }
+
   .cuota-card {
     margin: 0px;
   }
@@ -92,17 +78,12 @@
     margin-bottom: 0px;
   }
   
-  .cuerpo {
-    margin-left: 12px;
-    margin-right: 12px;
-    background-color: #ffcc00;
-  }
   .home {
-    background-color:#ffcc00;
+    background-color:#ebeae5;
   }
   
   .bienvenida-cliente {
-    background-color: #ffcc00; /* amarillo */
+    background-color: #ebeae5; /* amarillo */
     padding: 20px 16px;
     font-family: 'Montserrat', sans-serif;
     color: #000;
@@ -137,13 +118,13 @@
     font-size: 14px;
   }
   .estado-cuota {
-    background-color: #ffcc00; /* Fondo amarillo Atlantis */
+    background-color: #ebeae5; /* Fondo amarillo Atlantis */
     padding: 20px 16px;
     font-family: 'Montserrat', sans-serif;
   }
   
   .cuota-card {
-    background-color: #f2f2f2; /* Gris claro */
+    background-color: #f3f3f3; /* Gris claro */
     border-radius: 12px;
     padding: 20px;
     text-align: center;
@@ -158,7 +139,7 @@
   }
   
   .btn-pagar {
-    background-color: #ffcc00;
+    background-color: var(--f7-theme-color-amarillo);
     border: none;
     border-radius: 12px;
     padding: 12px 0;
@@ -171,71 +152,7 @@
   }
   
   .btn-pagar:hover {
-    background-color: #e6b800;
+    background-color: var(--f7-theme-color-amarillo);
   }
   
-  .rutina-fixed {
-    position: fixed;
-    bottom: 56px; /* deja espacio para tab bar si tenés */
-    width: 100%;
-    z-index: 10;
-  }
   
-  .rutina-section {
-    background-color: #ffcc00;
-    padding: 16px;
-    font-family: 'Montserrat', sans-serif;
-    cursor: pointer;
-  }
-  
-  .rutina-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-right: 20px;
-  }
-  
-  .rutina-title {
-    font-weight: 800;
-    font-size: 18px;
-    color: #000;
-    text-transform: uppercase;
-  }
-  
-  .rutina-link {
-    font-size: 14px;
-    color: #000;
-    margin-top: 4px;
-  }
-  
-  .arrow {
-    font-size: 30px;
-    font-weight: bold;
-    color: #000;
-  }
-
-  /* Cambia el fondo de la toolbar inferior */
-.toolbar.tabbar {
-  background-color: #000000; /* negro */
-  border-top: none;
-}
-
-/* Estilo general de los ítems */
-.tabbar .tab-link {
-  color: white; /* texto blanco */
-}
-
-/* Estilo cuando el ítem está activo */
-.tabbar .tab-link-active {
-  color: #ffcc00; /* amarillo para el ícono y texto activos */
-}
-
-/* Estilo de los íconos */
-.tabbar .tab-link i {
-  color: #ffcc00; /* íconos amarillos siempre */
-}
-  
-.f7-block-margin-vertical {
-  margin-top: 0px !important;   /* o el valor que quieras */
-  margin-bottom: 0px !important;
-}

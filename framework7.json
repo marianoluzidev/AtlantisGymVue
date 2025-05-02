@@ -12,7 +12,7 @@
   "theming": {
     "customColor": true,
     "color": "#000000",
-    "darkMode": false,
+    "darkMode": true,
     "iconFonts": true
   },
   "customBuild": false

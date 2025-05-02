@@ -103,11 +103,7 @@
       // Framework7 Parameters
       const f7params = {
         name: 'AtlantisGym', // App name
-        theme: 'auto', // Automatic theme detection
-        colors: {
-          primary: '#000000',
-        },
-
+        theme: 'md', // Automatic theme detection
 
 
         // App store
