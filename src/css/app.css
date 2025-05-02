@@ -89,7 +89,7 @@
     font-weight: 700;
     text-transform: uppercase;
     color: #000;
-    margin-bottom: 12px;
+    margin-bottom: 0px;
   }
   
   .cuerpo {
@@ -213,4 +213,29 @@
     font-weight: bold;
     color: #000;
   }
+
+  /* Cambia el fondo de la toolbar inferior */
+.toolbar.tabbar {
+  background-color: #000000; /* negro */
+  border-top: none;
+}
+
+/* Estilo general de los ítems */
+.tabbar .tab-link {
+  color: white; /* texto blanco */
+}
+
+/* Estilo cuando el ítem está activo */
+.tabbar .tab-link-active {
+  color: #ffcc00; /* amarillo para el ícono y texto activos */
+}
+
+/* Estilo de los íconos */
+.tabbar .tab-link i {
+  color: #ffcc00; /* íconos amarillos siempre */
+}
   
+.f7-block-margin-vertical {
+  margin-top: 0px !important;   /* o el valor que quieras */
+  margin-bottom: 0px !important;
+}
