@@ -30,6 +30,10 @@ node_modules/
 # dotenv environment variables file
 .env
 
+public/
+
+.firebase/
+
 # Misc
 .DS_Store
 Thumbs.db
