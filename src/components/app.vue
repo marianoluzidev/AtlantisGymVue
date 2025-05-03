@@ -27,7 +27,14 @@
   <f7-views tabs class="safe-areas">
     <!-- Tabbar for switching views-tabs -->
   <f7-toolbar tabbar icons bottom v-if="userStore.user">
-      <f7-link tab-link="#view-home" tab-link-active icon-ios="f7:house_fill" icon-md="material:home" text="Home"></f7-link>
+      <f7-link
+        tab-link="#view-home"
+        tab-link-active
+        icon-ios="f7:house_fill"
+        icon-md="material:home"
+        text="Home"
+        @click="navigateToHome">
+      </f7-link>
       <f7-link tab-link="#view-catalog" icon-ios="f7:square_list_fill" icon-md="material:view_list" text="Catalog"></f7-link>
       <f7-link tab-link="#view-settings" icon-ios="f7:gear" icon-md="material:settings" text="Settings"></f7-link>
   </f7-toolbar>
@@ -121,5 +128,9 @@ onMounted(() => {
     })
   })
 })
+const navigateToHome = () => {
+  f7.views.main.router.navigate('/');
+};
+
 </script>
 

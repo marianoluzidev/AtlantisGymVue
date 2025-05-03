@@ -7,6 +7,7 @@ import ProductPage from '../pages/product.vue';
 import SettingsPage from '../pages/settings.vue';
 import LoginPage from '../pages/login.vue'
 import RegisterPage from '../pages/register.vue'
+import PerfilePage from '../pages/perfil.vue';
 
 import DynamicRoutePage from '../pages/dynamic-route.vue';
 import RequestAndLoad from '../pages/request-and-load.vue';
@@ -24,6 +25,10 @@ var routes = [
   {
     path: '/form/',
     component: FormPage,
+  },
+  {
+    path: '/perfil/',
+    component: PerfilePage,
   },
   {
     path: '/catalog/',
@@ -100,6 +105,7 @@ var routes = [
     path: '(.*)',
     component: NotFoundPage,
   },
+  
 ];
 
 export default routes;

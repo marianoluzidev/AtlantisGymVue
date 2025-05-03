@@ -38,5 +38,27 @@ app.use(createPinia());
 const userStore = useUserStore();
 userStore.initAuth();
 
+// Manejar el evento del botón físico de retroceso
+document.addEventListener('deviceready', () => {
+  document.addEventListener('backbutton', (event) => {
+    event.preventDefault();
+    const mainView = f7.views.main;
+
+    if (mainView.router && mainView.router.history.length > 1) {
+      mainView.router.back();
+    } else {
+      f7.dialog.confirm('¿Deseas salir de la aplicación?', () => {
+        if (typeof navigator !== 'undefined' && navigator.app) {
+          navigator.app.exitApp();
+        } else if (typeof navigator !== 'undefined' && navigator.device) {
+          navigator.device.exitApp();
+        } else {
+          console.warn('No se pudo cerrar la aplicación: API no disponible.');
+        }
+      });
+    }
+  }, false);
+});
+
 // Mount the app
 app.mount('#app');

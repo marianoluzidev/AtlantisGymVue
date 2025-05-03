@@ -1,7 +1,7 @@
 <template>
   <f7-page name="home" class="home" >
     <!-- Top Navbar -->
-    <f7-navbar title="ATLANTIS GYM"/>
+    <f7-navbar title="ATLANTIS GYM ( test v0.5)"/>
 
     <!-- Motivational Image + Quote -->
     <div class="motivational-banner">
@@ -40,7 +40,7 @@
     <f7-list strong inset>
       <f7-list-item link="/about/" title="Rutina actual"></f7-list-item>
       <f7-list-item link="/about/" title="Pagos"></f7-list-item>
-      <f7-list-item link="/about/" title="Mi Perfil"></f7-list-item>
+      <f7-list-item link="/perfil/" title="Mi Perfil"></f7-list-item>
     </f7-list>
     
     <div class="estado-cuota">
