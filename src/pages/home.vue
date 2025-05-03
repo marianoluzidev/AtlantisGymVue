@@ -40,7 +40,7 @@
     <f7-list strong inset>
       <f7-list-item link="/about/" title="Rutina actual"></f7-list-item>
       <f7-list-item link="/about/" title="Pagos"></f7-list-item>
-      <f7-list-item link="/about/" title="Mi Perfil"></f7-list-item>
+      <f7-list-item link="/perfil/" title="Mi Perfil"></f7-list-item>
     </f7-list>
     
     <div class="estado-cuota">
