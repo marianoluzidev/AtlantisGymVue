@@ -5,6 +5,8 @@ import FormPage from '../pages/form.vue';
 import CatalogPage from '../pages/catalog.vue';
 import ProductPage from '../pages/product.vue';
 import SettingsPage from '../pages/settings.vue';
+import LoginPage from '../pages/login.vue'
+import RegisterPage from '../pages/register.vue'
 
 import DynamicRoutePage from '../pages/dynamic-route.vue';
 import RequestAndLoad from '../pages/request-and-load.vue';
@@ -35,7 +37,14 @@ var routes = [
     path: '/settings/',
     component: SettingsPage,
   },
-
+  {
+    path: '/login/',
+    component: LoginPage,
+  },
+  {
+    path: '/register/',
+    component: RegisterPage,
+  },
   {
     path: '/dynamic-route/blog/:blogId/post/:postId/',
     component: DynamicRoutePage,

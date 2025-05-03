@@ -1,6 +1,8 @@
 // Import Vue
 import { createApp } from 'vue';
 
+import { createPinia } from 'pinia'
+
 // Import Framework7
 import Framework7 from 'framework7/lite-bundle';
 
@@ -9,6 +11,8 @@ import Framework7Vue, { registerComponents } from 'framework7-vue/bundle';
 
 // Import Framework7 Styles
 import 'framework7/css/bundle';
+
+import { f7 } from 'framework7-vue';
 
 // Import Icons and App Custom Styles
 import '../css/icons.css';
@@ -25,6 +29,14 @@ const app = createApp(App);
 
 // Register Framework7 Vue components
 registerComponents(app);
+
+import { useUserStore } from './user';
+
+app.use(createPinia());
+
+// Inicializar el estado del usuario
+const userStore = useUserStore();
+userStore.initAuth();
 
 // Mount the app
 app.mount('#app');
