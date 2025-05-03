@@ -30,9 +30,9 @@
     <!---</f7-block>    --->
 
     <!-- Cuota Section -->        
-      <div class="estado-cuota">
+    <div class="estado-cuota">
       <div class="cuota-card">
-        <div class="cuota-estado">CUOTA VENCIDA 2</div>
+        <div class="cuota-estado">CUOTA VENCIDA</div>
         <button class="btn-pagar" >PAGAR</button>
       </div>
     </div>    
@@ -43,10 +43,23 @@
       <f7-list-item link="/about/" title="Mi Perfil"></f7-list-item>
     </f7-list>
     
+    <div class="estado-cuota">
+      <f7-button class="btn-pagar" fill @click="logout">Logout</f7-button>
+    </div>
+
   </f7-page>
 </template>
 
 <script>
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase/firebase/'; // tu archivo donde configurás Firebase
+import { f7 } from 'framework7-vue';
+import { useUserStore } from '../js/user'
+import { computed } from 'vue'
+
+const userStore = useUserStore()
+
+console.log( userStore.uid );
 export default {
   data() {
     return {
@@ -58,6 +71,22 @@ export default {
         cuota: 'Cuota vencida' // o 'Al día'
       }
     };
+  },
+  methods: {
+    async logout() {
+      try {
+        await signOut(auth); // Cierra sesión en Firebase
+        console.log("haciendo el log out");
+        // Opcional: limpiar cualquier estado local si tenés (ej: this.user = null)
+
+        // Redireccionar al login
+        f7.views.main.router.navigate('/login/');
+        
+        console.log('Logout exitoso');
+      } catch (error) {
+        console.error('Error al hacer logout:', error);
+      }
+    }
   }
 };
 </script>
