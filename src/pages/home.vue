@@ -62,15 +62,16 @@ const userStore = useUserStore()
 console.log( userStore.uid );
 export default {
   data() {
-    return {
-      cliente: {
-        nombre: 'Mariano',
-        peso: 82,
-        altura: 178,
-        objetivo: 'Musculación',
-        cuota: 'Cuota vencida' // o 'Al día'
-      }
-    };
+    const userStore = useUserStore();
+    const cliente = computed(() => ({
+      nombre: userStore.user?.nombre || 'Invitado',
+      peso: userStore.user?.peso || '--',
+      altura: userStore.user?.altura || '--',
+      objetivo: userStore.user?.objetivo || '--',
+      cuota: 'Cuota vencida' // o 'Al día'
+    }));
+
+    return { cliente };
   },
   methods: {
     async logout() {

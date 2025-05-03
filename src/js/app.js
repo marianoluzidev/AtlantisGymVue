@@ -30,7 +30,13 @@ const app = createApp(App);
 // Register Framework7 Vue components
 registerComponents(app);
 
-app.use(createPinia())
+import { useUserStore } from './user';
+
+app.use(createPinia());
+
+// Inicializar el estado del usuario
+const userStore = useUserStore();
+userStore.initAuth();
 
 // Mount the app
 app.mount('#app');

@@ -84,7 +84,7 @@ export const useUserStore = defineStore('user', () => {
         const uid = firebaseUser.uid
         const userDoc = await getDoc(doc(db, 'usuario', uid))
         const userData = userDoc.exists() ? userDoc.data() : {}
-  
+        
         // Combinar los datos de Firebase Auth con los de Firestore
         user.value = {
           uid: firebaseUser.uid,
