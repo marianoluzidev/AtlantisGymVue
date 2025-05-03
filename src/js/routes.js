@@ -105,6 +105,7 @@ var routes = [
     path: '(.*)',
     component: NotFoundPage,
   },
+  
 ];
 
 export default routes;

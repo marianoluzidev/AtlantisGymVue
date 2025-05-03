@@ -13,24 +13,28 @@
             type="text"
             v-model:value="formData.nombre"
             placeholder="Ingresa tu nombre"
+            required
           ></f7-list-input>
           <f7-list-input
             label="Apellido"
             type="text"
             v-model:value="formData.apellido"
             placeholder="Ingresa tu apellido"
+            required
           ></f7-list-input>
           <f7-list-input
             label="Peso"
             type="number"
             v-model:value="formData.peso"
             placeholder="Ingresa tu peso"
+            required
           ></f7-list-input>
           <f7-list-input
             label="Altura"
             type="number"
             v-model:value="formData.altura"
             placeholder="Ingresa tu altura"
+            required
           ></f7-list-input>
           <f7-list-input
             label="Objetivo"
@@ -125,7 +129,13 @@ export default {
         };
 
         await updateDoc(userDocRef, updatedData);
-
+        
+        // Actualizar los datos en userStore.user
+        userStore.user = {
+          ...userStore.user,
+          ...updatedData
+        };
+        
         f7.dialog.alert('Datos actualizados correctamente');
       } catch (error) {
         console.error('Error al actualizar los datos:', error);
