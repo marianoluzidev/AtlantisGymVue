@@ -1,7 +1,7 @@
 <template>
   <f7-page name="home" class="home" >
     <!-- Top Navbar -->
-    <f7-navbar title="ATLANTIS GYM ( test v0.5)"/>
+    <f7-navbar title="ATLANTIS GYM ( test v0.6)"/>
 
     <!-- Motivational Image + Quote -->
     <div class="motivational-banner">
@@ -38,7 +38,7 @@
     </div>    
           
     <f7-list strong inset>
-      <f7-list-item link="/about/" title="Rutina actual"></f7-list-item>
+      <f7-list-item link="/rutinas/" title="Rutina actual"></f7-list-item>
       <f7-list-item link="/about/" title="Pagos"></f7-list-item>
       <f7-list-item link="/perfil/" title="Mi Perfil"></f7-list-item>
     </f7-list>
