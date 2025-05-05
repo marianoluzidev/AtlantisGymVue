@@ -1,7 +1,7 @@
 <template>
   <f7-page name="home" class="home" >
     <!-- Top Navbar -->
-    <f7-navbar title="ATLANTIS GYM ( test v0.6)"/>
+    <f7-navbar title="ATLANTIS GYM ( test v0.7)"/>
 
     <!-- Motivational Image + Quote -->
     <div class="motivational-banner">

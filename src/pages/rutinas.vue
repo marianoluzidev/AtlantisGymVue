@@ -1,5 +1,5 @@
 <template>
-  <f7-page>
+  <f7-page class="home" >
     <f7-navbar title="Rutinas" back-link="Back"></f7-navbar>
     <f7-list strong inset>
       <f7-list-item

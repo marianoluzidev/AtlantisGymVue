@@ -9,6 +9,7 @@ import LoginPage from '../pages/login.vue'
 import RegisterPage from '../pages/register.vue'
 import PerfilePage from '../pages/perfil.vue';
 import RutinasPage from '../pages/rutinas.vue';
+import RutinaDetallePage from '../pages/rutinadetalle.vue';
 
 import DynamicRoutePage from '../pages/dynamic-route.vue';
 import RequestAndLoad from '../pages/request-and-load.vue';
@@ -34,6 +35,10 @@ var routes = [
   {
     path: '/rutinas/',
     component: RutinasPage,
+  },
+  {
+    path: '/rutinadetalle/:id',
+    component: RutinaDetallePage,
   },
   {
     path: '/catalog/',
