@@ -1,28 +1,45 @@
 <template>
-    <f7-page class="home" >
-      <f7-navbar title="Rutinas Detalle" back-link="Back"></f7-navbar>
+  <f7-page class="routine-detail-page home">
+    <f7-navbar title="Rutinas Detalle" back-link="Back" class="navbar-custom"></f7-navbar>
+
+    <!-- Cartel de Cargando -->
+    <div v-if="isLoading" class="loading-overlay">
+      <p>Cargando...</p>
+    </div>
+
+    <div class="routine-header">
       <h1>{{ rutina.nombre }}</h1>
       <h2>Nivel: {{ rutina.nivel }}</h2>
-      <div v-for="dia in dias" :key="dia.id">
-        <h3>Día: {{ dia.nombre }}</h3>
-        <ul>
-          <li v-for="ejercicio in dia.ejercicios" :key="ejercicio.id">
-            <p>Ejercicio: {{ ejercicio.nombre }}</p>
-            <p>Series: {{ ejercicio.series }}</p>
-            <p>Repeticiones: {{ ejercicio.repeticiones }}</p>
-            <p>Notas: {{ ejercicio.notas }}</p>
-            <p>Descanso: {{ ejercicio.descanso }}</p>
-          </li>
-        </ul>
-      </div>
-      
-    </f7-page>
-  
-  </template>
+    </div>
+
+    <div v-for="dia in dias" :key="dia.id" class="day-card">
+      <h3 class="day-title">🗓 Día: {{ dia.nombre }}</h3>
+      <table class="exercise-table">
+        <thead>
+          <tr>
+            <th>Ejercicio</th>
+            <th>Series</th>
+            <th>Reps</th>
+            <th>Descanso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="ejercicio in dia.ejercicios" :key="ejercicio.id">
+            <td>{{ ejercicio.nombre }}</td>
+            <td>{{ ejercicio.series }}</td>
+            <td>{{ ejercicio.repeticiones }}</td>
+            <td>{{ ejercicio.descanso }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </f7-page>
+</template>
     <script>
     
     import { ref, onMounted } from 'vue';
-    import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
+    
+    import { doc, getDoc, collection, getDocs, query, where } from 'firebase/firestore';
     import { db } from '../firebase/firebase';
     
     export default {
@@ -36,6 +53,8 @@
         const rutina = ref({});
         const dias = ref([]);
     
+        const isLoading = ref(true); // Estado de carga
+        
         const fetchRutinaData = async () => {
           try {
             // Fetch rutina data
@@ -58,9 +77,26 @@
                   const ejerciciosData = await Promise.all(
                     dia.ejercicios.map(async ejercicio => {                      
                       if (ejercicio.ejercicio_id) {
-                        const ejercicioDetailsDoc = await getDoc(                          
-                          doc(db, 'ejercicios', ejercicio.ejercicio_id)
-                        );
+                        const ejerciciosCollection = collection(db, 'ejercicios');
+                        const ejercicioQuery = query(ejerciciosCollection, where('ejercicio_id', '==', ejercicio.ejercicio_id));
+                        const querySnapshot = await getDocs(ejercicioQuery);
+                        let ejercicioDetails = null;
+                        querySnapshot.forEach(doc => {
+                          ejercicioDetails = doc.data();
+                        });
+                        if (ejercicioDetails) {
+                          console.log(`Ejercicio encontrado: ${ejercicioDetails.nombre}`);
+                          return {
+                            ...ejercicio,
+                            nombre: ejercicioDetails.nombre,
+                          };
+                        } else {
+                          console.warn(`Ejercicio con ejercicio_id ${ejercicio.ejercicio_id} no encontrado.`);
+                          return {
+                            ...ejercicio,
+                            nombre: 'Nombre no disponible',
+                          };
+                        }
                         console.log('ejercicioDetailsDoc:', ejercicioDetailsDoc.data());
                         return {
                           ...ejercicio,
@@ -94,13 +130,16 @@
             }
           } catch (error) {
             console.error('Error fetching rutina data:', error);
+          } finally {
+            isLoading.value = false; // Finalizar carga
           }
         };
     
         onMounted(fetchRutinaData);
     
-        return { rutina, dias };
+        return { rutina, dias, isLoading };
       },
     };
     </script>
+
     

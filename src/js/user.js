@@ -13,6 +13,7 @@ const db = getFirestore()
 
 export const useUserStore = defineStore('user', () => {
   const user = ref(null)
+  const isLoading = ref(false)
 
   // Set user data
   const setUser = (firebaseUser) => {
@@ -43,9 +44,20 @@ export const useUserStore = defineStore('user', () => {
 
   // Cargar datos desde Firestore (si los necesitás)
   const fetchUserData = async () => {
-    if (!user.value) return null
-    const docSnap = await getDoc(doc(db, 'usuario', user.value.uid))
-    return docSnap.exists() ? docSnap.data() : null
+    isLoading.value = true;
+    if (!user.value) {
+      isLoading.value = false;
+      return null;
+    }
+    isLoading.value = true;
+    console.log("Setting isLoading to true");
+    try {
+      const docSnap = await getDoc(doc(db, 'usuario', user.value.uid))
+      return docSnap.exists() ? docSnap.data() : null
+    } finally {
+      console.log("Setting isLoading to false");
+      isLoading.value = false;
+    }
   }
 
   const login = async (email, password) => {
@@ -100,6 +112,7 @@ export const useUserStore = defineStore('user', () => {
   
   return {
     user,
+    isLoading,
     setUser,
     clearUser,
     registerUser,

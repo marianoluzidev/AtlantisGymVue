@@ -34,6 +34,8 @@ public/
 
 .firebase/
 
+android/
+
 # Misc
 .DS_Store
 Thumbs.db

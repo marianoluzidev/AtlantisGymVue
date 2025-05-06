@@ -1,5 +1,9 @@
 <template>
   <f7-page class="home" >
+    <!-- Cartel de Cargando -->
+    <div v-if="isLoading" class="loading-overlay">
+      <p>Cargando...</p>
+    </div>
     <f7-navbar title="Rutinas" back-link="Back"></f7-navbar>
     <f7-list strong inset>
       <f7-list-item
@@ -22,6 +26,7 @@
     setup() {
       const userStore = useUserStore();
       const rutinas = ref([]);
+      const isLoading = ref(true); // Estado de carga
   
       const fetchRutinas = async () => {
         try {
@@ -46,6 +51,7 @@
             };
           });
           console.log('Rutinas:', rutinas.value);
+          isLoading.value = false; // Finalizar carga
         } catch (error) {
           console.error('Error fetching rutinas:', error);
         }
@@ -53,7 +59,7 @@
   
       onMounted(fetchRutinas);
   
-      return { rutinas };
+      return { rutinas, isLoading };
     },
   };
   </script>
