@@ -27,9 +27,9 @@ const userStore = useUserStore()
 
 const register = async () => {
   try {
-    console.log("Datos:", email.value, password.value, nombre.value, apellido.value);
+    
     await userStore.registerUser(email.value, password.value, nombre.value, apellido.value)
-    console.log('Usuario registrado y Firestore creado')
+    
     f7.views.main.router.navigate('/');
   } catch (err) {
     console.error('Error al registrar:', err.message)

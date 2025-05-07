@@ -31,8 +31,7 @@
       const fetchRutinas = async () => {
         try {
           const userRutinasIds = userStore.user?.rutinasAsignadas || [];
-          console.log('userRutinasIds:', userRutinasIds);
-          console.log('userRutinasIds len:', userRutinasIds.length);
+
           if (userRutinasIds.length === 0) return;
   
           const rutinasQuery = query(
@@ -41,16 +40,16 @@
           );
   
           const querySnapshot = await getDocs(rutinasQuery);
-          console.log('querySnapshot:', querySnapshot);
+
           rutinas.value = querySnapshot.docs.map(doc => {
             const data = doc.data();
-            console.log('Document ID:', doc.id, 'Document Data:', data.nombre);
+
             return {
               id: doc.id,
               nombre: data?.nombre,
             };
           });
-          console.log('Rutinas:', rutinas.value);
+          
           isLoading.value = false; // Finalizar carga
         } catch (error) {
           console.error('Error fetching rutinas:', error);

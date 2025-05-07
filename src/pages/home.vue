@@ -80,14 +80,12 @@ export default {
 
     const logout = async () => {
       try {
-        await signOut(auth);
-        console.log("haciendo el log out");
+        await signOut(auth);        
 
         // Redireccionar al login
         f7.views.main.router.navigate('/login/');
         //isLoading.value = false;
-
-        console.log('Logout exitoso');
+        
       } catch (error) {
         console.error('Error al hacer logout:', error);
       }

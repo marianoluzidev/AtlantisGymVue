@@ -83,4 +83,8 @@ npm run build
 npx cap copy
 npx cap open android
 
+## para deployar
+npm run build
+firebase deploy
+
 - si hay algun problema borrar la carpeta android

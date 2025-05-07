@@ -62,8 +62,7 @@
             const rutinaDoc = await getDoc(rutinaDocRef);
             if (rutinaDoc.exists()) {
               rutina.value = rutinaDoc.data();
-            }
-            console.log('Rutina:', rutina.value);
+            }            
             // Fetch dias and ejercicios from rutina document
             if (rutinaDoc.exists()) {
               const rutinaData = rutinaDoc.data();
@@ -84,8 +83,7 @@
                         querySnapshot.forEach(doc => {
                           ejercicioDetails = doc.data();
                         });
-                        if (ejercicioDetails) {
-                          console.log(`Ejercicio encontrado: ${ejercicioDetails.nombre}`);
+                        if (ejercicioDetails) {                          
                           return {
                             ...ejercicio,
                             nombre: ejercicioDetails.nombre,
@@ -96,8 +94,7 @@
                             ...ejercicio,
                             nombre: 'Nombre no disponible',
                           };
-                        }
-                        console.log('ejercicioDetailsDoc:', ejercicioDetailsDoc.data());
+                        }                        
                         return {
                           ...ejercicio,
                           nombre: ejercicioDetailsDoc.exists()
