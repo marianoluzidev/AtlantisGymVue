@@ -90,9 +90,6 @@ export default {
 
     // Cargar datos iniciales del usuario
     const loadUserData = () => {
-      console.log('Cargando datos del usuario...');
-      console.log('Usuario:', userStore.user);
-      console.log('UID:', userStore.user?.uid);
       if (userStore.user) {
         const { nombre, apellido, peso, altura, objetivo, telefono, direccion, fechaNacimiento } = userStore.user;
         formData.value = {

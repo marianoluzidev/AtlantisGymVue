@@ -76,3 +76,15 @@ framework7 assets --ui
 Love Framework7? Support project by donating or pledging on:
 - Patreon: https://patreon.com/framework7
 - OpenCollective: https://opencollective.com/framework7
+
+## capacitator
+
+npm run build
+npx cap copy
+npx cap open android
+
+## para deployar
+npm run build
+firebase deploy
+
+- si hay algun problema borrar la carpeta android

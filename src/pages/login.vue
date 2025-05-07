@@ -42,8 +42,7 @@
     },
     methods: {
       async login() {
-        try {
-          console.log('email:', this.email);
+        try {          
           // Intentar iniciar sesión con Firebase Authentication
           //await signInWithEmailAndPassword(auth, this.email, this.password);
           await store.login(this.email, this.password);

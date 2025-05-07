@@ -1,8 +1,12 @@
 <template>
   <f7-page name="home" class="home" >
+    <!-- Cartel de Cargando -->
+    <div v-if="isLoading" class="loading-overlay">
+      <p>Cargando...</p>
+    </div>
     <!-- Top Navbar -->
-    <f7-navbar title="ATLANTIS GYM ( test v0.5)"/>
-
+    <f7-navbar title="ATLANTIS GYM ( test v0.8)"/>
+    
     <!-- Motivational Image + Quote -->
     <div class="motivational-banner">
       <img src="../img/mancuernas.png" alt="Dumbbell" />
@@ -38,7 +42,7 @@
     </div>    
           
     <f7-list strong inset>
-      <f7-list-item link="/about/" title="Rutina actual"></f7-list-item>
+      <f7-list-item link="/rutinas/" title="Rutina actual"></f7-list-item>
       <f7-list-item link="/about/" title="Pagos"></f7-list-item>
       <f7-list-item link="/perfil/" title="Mi Perfil"></f7-list-item>
     </f7-list>
@@ -55,40 +59,44 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase/'; // tu archivo donde configurás Firebase
 import { f7 } from 'framework7-vue';
 import { useUserStore } from '../js/user'
-import { computed } from 'vue'
+import { computed, ref , onMounted} from 'vue'
 
-const userStore = useUserStore()
-
-console.log( userStore.uid );
 export default {
-  data() {
+  setup() {
     const userStore = useUserStore();
+    const isLoading = computed(() => userStore.isLoading);
+
     const cliente = computed(() => ({
       nombre: userStore.user?.nombre || 'Invitado',
       peso: userStore.user?.peso || '--',
       altura: userStore.user?.altura || '--',
       objetivo: userStore.user?.objetivo || '--',
-      cuota: 'Cuota vencida' // o 'Al día'
+      cuota: 'Cuota vencida',
     }));
 
-    return { cliente };
-  },
-  methods: {
-    async logout() {
+    onMounted(async () => {
+      await userStore.fetchUserData?.();
+    });
+
+    const logout = async () => {
       try {
-        await signOut(auth); // Cierra sesión en Firebase
-        console.log("haciendo el log out");
-        // Opcional: limpiar cualquier estado local si tenés (ej: this.user = null)
+        await signOut(auth);        
 
         // Redireccionar al login
         f7.views.main.router.navigate('/login/');
+        //isLoading.value = false;
         
-        console.log('Logout exitoso');
       } catch (error) {
         console.error('Error al hacer logout:', error);
       }
-    }
-  }
+    };
+
+    return {
+      isLoading,
+      cliente,
+      logout,
+    };
+  },
 };
 </script>
 
