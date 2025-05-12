@@ -6,21 +6,44 @@
     </div>
     <f7-navbar title="Detalle del Cliente" back-link="Back"></f7-navbar>
     <div v-if="cliente" class="bienvenida-cliente">
-      <h2>{{cliente.apellido}}, {{ cliente.nombre }}</h2>
-      <div class="info-cliente">
-        <div class="info-box">
-          <div class="info-label">Peso</div>
-          <div class="info-value">{{ cliente.peso }} kg</div>
-        </div>
-        <div class="info-box">
-          <div class="info-label">Altura</div>
-          <div class="info-value">{{ cliente.altura }} cm</div>
-        </div>
-        <div class="info-box">
-          <div class="info-label">Objetivo</div>
-          <div class="info-value">{{ cliente.objetivo }}</div>
+      <div class="card">
+        <div class="card-content card-content-padding">
+          <h2>{{cliente.apellido}}, {{ cliente.nombre }}</h2>
+          <div class="info-cliente">
+            <div class="info-box">
+              <div class="info-label">Peso</div>
+              <div class="info-value">{{ cliente.peso }} kg</div>
+            </div>
+            <div class="info-box">
+              <div class="info-label">Altura</div>
+              <div class="info-value">{{ cliente.altura }} cm</div>
+            </div>
+            <div class="info-box">
+              <div class="info-label">Objetivo</div>
+              <div class="info-value">{{ cliente.objetivo }}</div>
+            </div>
+          </div>
         </div>
       </div>
+
+      <f7-card title="Datos de cuota">
+        <f7-list simple-list dividers-ios>
+          <f7-list-item title="Estado: ">al dia</f7-list-item>
+          <f7-list-item title="Ultimo pago: ">15/03/2025</f7-list-item>
+          <f7-list-item title="Vencimiento: ">15/04/2025</f7-list-item>
+          <f7-list-item ><button class="btn-pagar" >Registrar pago</button></f7-list-item>          
+        </f7-list>
+      </f7-card>
+
+      <f7-card title="Rutinas asignadas">
+        <f7-list simple-list dividers-ios>
+          <f7-list-item title="">Rutina 1</f7-list-item>
+          <f7-list-item title="">Rutina 2</f7-list-item>
+          <f7-list-item title="">Rutina 3</f7-list-item>
+          <f7-list-item ><button class="btn-pagar" >Asignar rutina</button></f7-list-item>          
+        </f7-list>
+      </f7-card>
+      
     </div>
   </f7-page>
 </template>
