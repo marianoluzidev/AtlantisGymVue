@@ -36,6 +36,7 @@
         @click="navigateToHome">
       </f7-link>
       <f7-link tab-link="#view-catalog" icon-ios="f7:square_list_fill" icon-md="material:view_list" text="Catalog"></f7-link>
+      <f7-link tab-link="#view-admin" icon-ios="f7:square_list_fill" icon-md="material:admin_panel_settings" text="Admin"></f7-link>
       <f7-link tab-link="#view-settings" icon-ios="f7:gear" icon-md="material:settings" text="Settings"></f7-link>
   </f7-toolbar>
 
@@ -47,6 +48,8 @@
 
     <!-- Settings View -->
     <f7-view id="view-settings" name="settings" tab url="/settings/"></f7-view>
+
+    <f7-view id="view-admin" name="admin" tab url="/admin/"></f7-view>
 
   </f7-views>
 
