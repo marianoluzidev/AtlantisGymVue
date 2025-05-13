@@ -49,13 +49,11 @@ export const useUserStore = defineStore('user', () => {
       isLoading.value = false;
       return null;
     }
-    isLoading.value = true;
-    console.log("Setting isLoading to true");
+    isLoading.value = true;    
     try {
       const docSnap = await getDoc(doc(db, 'usuario', user.value.uid))
       return docSnap.exists() ? docSnap.data() : null
-    } finally {
-      console.log("Setting isLoading to false");
+    } finally {      
       isLoading.value = false;
     }
   }
@@ -67,8 +65,7 @@ export const useUserStore = defineStore('user', () => {
   
       // Cargar datos adicionales desde Firestore (opcional)
       const userDoc = await getDoc(doc(db, 'usuario', uid))
-      const userData = userDoc.exists() ? userDoc.data() : null
-      console.log("la data",userDoc.data());
+      const userData = userDoc.exists() ? userDoc.data() : null      
       // Guardar usuario en el store
       user.value = {
         ...cred.user,
