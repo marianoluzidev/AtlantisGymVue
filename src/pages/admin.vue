@@ -9,7 +9,11 @@
         <f7-list-item
           title ="Clientes"
           link="/clientes/"
-        ></f7-list-item>
+        >
+        <template #media>
+          <f7-icon md="material:person" ios="f7:person_fill" />
+        </template>
+      </f7-list-item>
       </f7-list>
     </f7-page>
   

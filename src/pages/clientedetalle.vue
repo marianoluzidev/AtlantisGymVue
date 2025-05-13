@@ -31,16 +31,29 @@
           <f7-list-item title="Estado: ">al dia</f7-list-item>
           <f7-list-item title="Ultimo pago: ">15/03/2025</f7-list-item>
           <f7-list-item title="Vencimiento: ">15/04/2025</f7-list-item>
-          <f7-list-item ><button class="btn-pagar" >Registrar pago</button></f7-list-item>          
+          <f7-list-item>
+            <button class="btn-pagar" @click="showPopup = true">Registrar pago</button>
+          </f7-list-item>
+
+          <f7-popup :opened="showPopup" @popup:closed="showPopup = false" class="home">
+            <div class="popup-content home">
+              <h2>Registrar Pago</h2>              
+              <f7-card title="Seleccionar fecha de pago">
+                <f7-list strong-ios outline-ios>
+                  <f7-list-input type="datepicker" placeholder="Fecha de pago" v-model:value="paymentDate" readonly />                  
+                </f7-list>              
+              </f7-card>
+              <button class="btn-pagar" @click="registerPayment">Registrar</button>                            
+            </div>
+          </f7-popup>
+
         </f7-list>
       </f7-card>
 
       <f7-card title="Rutinas asignadas">
         <f7-list simple-list dividers-ios>
-          <f7-list-item title="">Rutina 1</f7-list-item>
-          <f7-list-item title="">Rutina 2</f7-list-item>
-          <f7-list-item title="">Rutina 3</f7-list-item>
-          <f7-list-item ><button class="btn-pagar" >Asignar rutina</button></f7-list-item>          
+          <f7-list-item v-for="(rutina, index) in cliente.rutinas" :key="index" :title="rutina.nombre"></f7-list-item>
+          <f7-list-item ><button class="btn-pagar" >Asignar rutina</button></f7-list-item>
         </f7-list>
       </f7-card>
       
@@ -50,9 +63,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-
-
-import { doc, collection, getDoc, query } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; // Asegúrate de que la ruta sea correcta
 
 export default {
@@ -65,16 +76,45 @@ export default {
   setup(props) {
     const cliente = ref(null);
     const isLoading = ref(true);
+    const showPopup = ref(false);
+    const paymentDate = ref(null);
+
+    const registerPayment = () => {
+      if (paymentDate.value) {
+        console.log('Fecha de pago registrada:', paymentDate.value);
+        alert(`Pago registrado con fecha: ${paymentDate.value}`);
+      } else {
+        console.error('No se seleccionó una fecha de pago');
+        alert('Por favor, seleccione una fecha antes de registrar el pago.');
+      }
+      showPopup.value = false;
+    };
 
     onMounted(async () => {
-      
       const clienteRef = doc(db, 'usuario', props.id);
-
       try {
         console.log('ID del cliente:', props.id); // Verifica el ID del cliente
         const clienteSnap = await getDoc(clienteRef);
         if (clienteSnap.exists()) {
           cliente.value = clienteSnap.data();
+          console.log('Cliente encontrado:', cliente.value.rutinasAsignadas);
+          const rutinasPromises = (cliente.value.rutinasAsignadas || [])
+            .filter(rutinaId => rutinaId && typeof rutinaId === 'string')
+            .map(async (rutinaId) => {
+              const rutinaRef = doc(db, 'rutinas', rutinaId);
+              const rutinaSnap = await getDoc(rutinaRef);
+              if (rutinaSnap.exists()) {
+                const rutinaData = rutinaSnap.data();
+                return {
+                  id: rutinaId,
+                  ...rutinaData
+                };
+              } else {
+                return { id: rutinaId, nombre: 'Nombre no disponible' };
+              }
+            });
+          cliente.value.rutinas = await Promise.all(rutinasPromises);
+          console.log('Rutinas asignadas:', cliente.value.rutinas);
         } else {
           console.error('No se encontró el cliente');
         }
@@ -88,6 +128,9 @@ export default {
     return {
       cliente,
       isLoading,
+      showPopup,
+      paymentDate,
+      registerPayment,
     };
   },
 };
@@ -112,5 +155,9 @@ export default {
 }
 .info-value {
   font-size: 1.2em;
+}
+.popup-content {
+  padding: 20px;
+  text-align: center;
 }
 </style>

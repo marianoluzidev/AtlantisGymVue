@@ -5,7 +5,7 @@
       <p>Cargando...</p>
     </div>
     <!-- Top Navbar -->
-    <f7-navbar title="ATLANTIS GYM ( test v0.10)"/>
+    <f7-navbar title="ATLANTIS GYM ( test v0.11)"/>
     
     <!-- Motivational Image + Quote -->
     <div class="motivational-banner">
