@@ -70,7 +70,7 @@
     color: black !important;
   }
   .bienvenida {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 14px;
     font-weight: 700;
     text-transform: uppercase;
@@ -84,12 +84,16 @@
   
   .bienvenida-cliente {
     background-color: #ebeae5; /* amarillo */
-    padding: 20px 16px;
-    font-family: 'Montserrat', sans-serif;
+    /*padding: 20px 16px;*/
+    font-family: 'Roboto', sans-serif;
     color: #000;
     text-align: center;
   }
   
+  .app-font{
+    font-family: 'Roboto', sans-serif;
+  }
+
   .bienvenida-cliente h2 {
     font-size: 22px;
     font-weight: 800;
@@ -99,10 +103,14 @@
   
   .info-cliente {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-around;    
     flex-wrap: wrap;
   }
   
+  .texto-gris {
+    color: #646464;
+  }
+
   .info-box {
     text-align: center;
     margin: 4px 8px;
@@ -120,7 +128,7 @@
   .estado-cuota {
     background-color: #ebeae5; /* Fondo amarillo Atlantis */
     padding: 20px 16px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Roboto', sans-serif;
   }
   
   .cuota-card {

@@ -11,7 +11,7 @@
           link="/clientes/"
         >
         <template #media>
-          <f7-icon md="material:person" ios="f7:person_fill" />
+          <f7-icon md="material:group" ios="f7:group" />
         </template>
       </f7-list-item>
       </f7-list>
