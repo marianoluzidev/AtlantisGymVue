@@ -82,6 +82,8 @@ Love Framework7? Support project by donating or pledging on:
 npm run build
 npx cap copy
 npx cap open android
+## para sincronizar android studio
+npx cap sync android
 
 ## para deployar
 npm run build

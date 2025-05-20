@@ -62,3 +62,14 @@ document.addEventListener('deviceready', () => {
 
 // Mount the app
 app.mount('#app');
+import { App as CapacitorApp } from '@capacitor/app';
+
+
+CapacitorApp.addListener('backButton', () => {
+  if (router.currentRoute.value.path === '/') {
+    // estás en la pantalla principal
+    console.log('Botón atrás en home, prevenís la salida');
+  } else {
+    router.back(); // vuelve una ruta atrás
+  }
+});
