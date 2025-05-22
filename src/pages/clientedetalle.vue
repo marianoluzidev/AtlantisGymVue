@@ -27,12 +27,18 @@
       </div>
 
       <f7-card title="Datos de cuota">
-        <f7-list simple-list dividers-ios>
-          <f7-list-item title="Estado: ">al dia</f7-list-item>
-          <f7-list-item title="Ultimo pago: ">15/03/2025</f7-list-item>
-          <f7-list-item title="Vencimiento: ">15/04/2025</f7-list-item>
+        <f7-list dividers-ios strong-ios outline-ios>
+          <f7-list-item title="Estado: ">{{ estadoCuota }}</f7-list-item>
+          <f7-list-item title="Ultimo pago: ">{{ ultimoPago || 'No disponible' }}</f7-list-item>
+          <f7-list-item title="Vencimiento: ">{{ vencimiento || 'No disponible' }}</f7-list-item>
           <f7-list-item>
             <button class="btn-pagar" @click="showPopup = true">Registrar pago</button>
+          </f7-list-item>
+
+          <f7-list-item :link="`/historialpagos/${id}`" title="Historial" after="Administrar">
+            <template #media>
+              <f7-icon icon="icon-f7" />
+            </template>
           </f7-list-item>
 
           <f7-popup :opened="showPopup" @popup:closed="showPopup = false" class="home">
@@ -41,9 +47,13 @@
               <f7-card title="Seleccionar fecha de pago">
                 <f7-list strong-ios outline-ios>
                   <f7-list-input type="datepicker" placeholder="Fecha de pago" v-model:value="paymentDate" readonly />                  
-                </f7-list>              
+                <f7-list-input type="number" placeholder="Monto" v-model:value="paymentAmount" clear-button />
+                </f7-list>
               </f7-card>
-              <button class="btn-pagar" @click="registerPayment">Registrar</button>                            
+              <div class="button-group">
+                <button class="btn-pagar" @click="showPopup = false">Cancelar</button>
+                <button class="btn-pagar" @click="registerPayment">Registrar</button>
+              </div>
             </div>
           </f7-popup>
 
@@ -63,7 +73,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; // Asegúrate de que la ruta sea correcta
 
 export default {
@@ -77,28 +87,104 @@ export default {
     const cliente = ref(null);
     const isLoading = ref(true);
     const showPopup = ref(false);
+    const estadoCuota = ref(''); // Estado de la cuota
+    const ultimoPago = ref(null);
+    const vencimiento = ref(null);
     const paymentDate = ref(null);
+    const paymentAmount = ref(null); // Valor predeterminado
 
-    const registerPayment = () => {
-      if (paymentDate.value) {
-        console.log('Fecha de pago registrada:', paymentDate.value);
-        alert(`Pago registrado con fecha: ${paymentDate.value}`);
-      } else {
-        console.error('No se seleccionó una fecha de pago');
-        alert('Por favor, seleccione una fecha antes de registrar el pago.');
-      }
-      showPopup.value = false;
+    const registerPayment = async () => {
+        if (paymentDate.value) {
+            const fechaPago = new Date(paymentDate.value[0]);
+            const fechaActual = new Date();
+            
+            // Validar que la fecha no sea mayor al día actual
+            if (fechaPago > fechaActual) {
+                alert('No se pueden registrar pagos a futuro');
+                return;
+            }
+
+            try {
+                console.log('Fecha de pago seleccionada:', paymentDate.value[0]);
+
+                // Sumar 30 días de forma segura
+                const fechaVencimiento = new Date(fechaPago);
+                fechaVencimiento.setDate(fechaVencimiento.getDate() + 30);
+
+                // Formato yyyy-MM para mesReferencia
+                const mesReferencia = fechaPago.toISOString().slice(0, 7);
+
+                const monto = paymentAmount.value;
+                const usuarioId = props.id;
+                console.log(paymentAmount.value);
+                console.log('ID del cliente:', usuarioId);
+                console.log('Fecha de pago:', fechaPago);
+
+                await addDoc(collection(db, 'pago'), {
+                    fechaPago,
+                    fechaVencimiento,
+                    mesReferencia,
+                    monto,
+                    usuarioId,
+                });
+
+                alert(`Pago registrado con éxito para la fecha: ${fechaPago}`);
+                paymentDate.value = null;
+                document.querySelector('input[placeholder="Fecha de pago"]').value = '';
+            } catch (error) {
+                console.error('Error al registrar el pago:', error);
+                alert('Hubo un error al registrar el pago. Inténtelo nuevamente.');
+            }
+        } else {
+            console.error('No se seleccionó una fecha de pago');
+            alert('Por favor, seleccione una fecha antes de registrar el pago.');
+        }
+        showPopup.value = false;
     };
 
     onMounted(async () => {
-      const clienteRef = doc(db, 'usuario', props.id);
-      try {
-        console.log('ID del cliente:', props.id); // Verifica el ID del cliente
-        const clienteSnap = await getDoc(clienteRef);
-        if (clienteSnap.exists()) {
-          cliente.value = clienteSnap.data();
-          console.log('Cliente encontrado:', cliente.value.rutinasAsignadas);
-          const rutinasPromises = (cliente.value.rutinasAsignadas || [])
+        const clienteRef = doc(db, 'usuario', props.id);
+        try {
+            console.log('ID del cliente:', props.id); // Verifica el ID del cliente
+            const clienteSnap = await getDoc(clienteRef);
+            if (clienteSnap.exists()) {
+                cliente.value = clienteSnap.data();
+                console.log('Cliente encontrado:', cliente.value.rutinasAsignadas);
+
+                // Obtener el último pago del cliente
+                const pagosQuery = collection(db, 'pago');
+                const pagosSnapshot = await getDocs(pagosQuery);
+                const pagosCliente = pagosSnapshot.docs
+                    .map(doc => doc.data())
+                    .filter(pago => pago.usuarioId === props.id)
+                    .sort((a, b) => new Date(b.fechaPago) - new Date(a.fechaPago));
+                console.log('Pagos del cliente:', pagosCliente);
+                if (pagosCliente.length > 0) {
+                    const formatFecha = (timestamp) => {
+                        const date = timestamp.toDate();
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const year = date.getFullYear();
+                        return `${day}/${month}/${year}`;
+                    };
+
+                    ultimoPago.value = formatFecha(pagosCliente[0].fechaPago);
+                    vencimiento.value = formatFecha(pagosCliente[0].fechaVencimiento);
+                    const hoy = new Date();
+                    const fechaPago = pagosCliente[0].fechaPago.toDate();
+                    const fechaVenc = pagosCliente[0].fechaVencimiento.toDate();
+
+                    // Determinar estado de la cuota
+                    if (hoy >= fechaPago && hoy <= fechaVenc) {
+                        estadoCuota.value = 'Al día';
+                    } else {
+                        estadoCuota.value = 'Cuota vencida';
+                    }
+                } else {
+                    estadoCuota.value = 'Cuota vencida'; // Por defecto si no hay pagos
+                }
+
+                const rutinasPromises = (cliente.value.rutinasAsignadas || [])
             .filter(rutinaId => rutinaId && typeof rutinaId === 'string')
             .map(async (rutinaId) => {
               const rutinaRef = doc(db, 'rutinas', rutinaId);
@@ -131,6 +217,10 @@ export default {
       showPopup,
       paymentDate,
       registerPayment,
+      paymentAmount,
+      estadoCuota,
+      ultimoPago,
+      vencimiento,
     };
   },
 };
@@ -159,5 +249,11 @@ export default {
 .popup-content {
   padding: 20px;
   text-align: center;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 </style>

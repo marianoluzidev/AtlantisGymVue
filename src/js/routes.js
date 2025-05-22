@@ -19,6 +19,7 @@ import ClienteDetallePage from '../pages/clientedetalle.vue';
 import DynamicRoutePage from '../pages/dynamic-route.vue';
 import RequestAndLoad from '../pages/request-and-load.vue';
 import NotFoundPage from '../pages/404.vue';
+import historialpagosPage from '../pages/historialpagos.vue';
 
 var routes = [
   {
@@ -52,6 +53,10 @@ var routes = [
   {
     path: '/clientedetalle/:id',
     component: ClienteDetallePage,
+  },
+  {
+    path: '/historialpagos/:id',
+    component: historialpagosPage,
   },
   {
     path: '/rutinadetalle/:id',

@@ -38,16 +38,14 @@
         <div class="cuota-card">
             <div class="cuota-estado" style="text-align: center;">CUOTA</div>
             <ul class="cuota-info" style="list-style: none; padding-bottom: 15px; margin-left: 10px; text-align: start; padding-left: 0; line-height: 2;">
-                <li><strong>Último pago:</strong> 01/01/2025</li>
-                <li><strong>Vencimiento:</strong> 01/02/2025</li>
-                <li><strong>Estado:</strong> Al día</li>
+                <li><strong>Último pago:</strong> ---</li>
+                <li><strong>Vencimiento:</strong> ---</li>
+                <li><strong>Estado:</strong> ---</li>
             </ul>
             <button class="btn-pagar">PAGAR</button>
         </div>
     </div>
-    
-
-          
+              
     <f7-list strong inset >
       <f7-list-item link="/rutinas/" title="Rutinas">
         <template #media><f7-icon md="material:fitness_center" ios="f7:fitness_center" /></template>
@@ -72,7 +70,8 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase/'; // tu archivo donde configurás Firebase
 import { f7 } from 'framework7-vue';
 import { useUserStore } from '../js/user'
-import { computed, ref , onMounted} from 'vue'
+import { computed, watch , onMounted} from 'vue'
+import { getFirestore, collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
 
 export default {
   setup() {
@@ -88,8 +87,59 @@ export default {
     }));
 
     onMounted(async () => {
-      await userStore.fetchUserData?.();
+      await userStore.fetchUserData?.();      
     });
+
+    const userId = computed(() => userStore.user?.uid || null);
+
+    watch(userId, (newUid) => {
+      if (newUid) {
+        console.log('Cliente UID cargado desde computed:', newUid);
+        
+        const db = getFirestore();
+        
+        watch(userId, async (newUid) => {
+          if (newUid) {
+            console.log('Cliente UID cargado desde computed:', newUid);
+        
+            try {
+              // Consulta a Firestore
+              const pagosRef = collection(db, 'pago');
+              const q = query(
+                pagosRef,
+                where('usuarioId', '==', newUid),
+                orderBy('fechaPago', 'desc'),
+                limit(1)
+              );
+              const querySnapshot = await getDocs(q);
+        
+              if (!querySnapshot.empty) {
+                const ultimoPago = querySnapshot.docs[0].data();
+                const fechaPago = new Date(ultimoPago.fechaPago.seconds * 1000);
+                const fechaVencimiento = new Date(ultimoPago.fechaVencimiento.seconds * 1000);
+                const hoy = new Date();
+        
+                const estado = hoy >= fechaPago && hoy <= fechaVencimiento ? 'Al día' : 'Pago vencido';
+        
+                // Actualizar la sección Cuota
+                const cuotaInfo = document.querySelector('.cuota-info');
+                if (cuotaInfo) {
+                  cuotaInfo.innerHTML = `
+                    <li><strong>Último pago:</strong> ${fechaPago.toLocaleDateString()}</li>
+                    <li><strong>Vencimiento:</strong> ${fechaVencimiento.toLocaleDateString()}</li>
+                    <li><strong>Estado:</strong> <span style="color: ${estado === 'Pago vencido' ? 'red' : 'inherit'};">${estado}</span></li>
+                  `;
+                }
+              } else {
+                console.log('No se encontraron pagos para este usuario.');
+              }
+            } catch (error) {
+              console.error('Error al obtener el último pago:', error);
+            }
+          }
+        }, { immediate: true });
+      }
+    }, { immediate: true });
 
     const logout = async () => {
       try {
