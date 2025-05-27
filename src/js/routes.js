@@ -55,7 +55,7 @@ var routes = [
     component: ClienteDetallePage,
   },
   {
-    path: '/historialpagos/:id',
+    path: '/historialpagos/:id/:actions',
     component: historialpagosPage,
   },
   {

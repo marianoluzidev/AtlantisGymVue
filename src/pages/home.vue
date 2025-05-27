@@ -5,7 +5,7 @@
       <p>Cargando...</p>
     </div>
     <!-- Top Navbar -->
-    <f7-navbar class="app-font" title="ATLANTIS GYM ( test v0.11)"/>
+    <f7-navbar class="app-font" title="ATLANTIS GYM ( test v0.13)"/>
     
     <!-- Motivational Image + Quote -->
     <div class="motivational-banner">
@@ -42,7 +42,7 @@
                 <li><strong>Vencimiento:</strong> ---</li>
                 <li><strong>Estado:</strong> ---</li>
             </ul>
-            <button class="btn-pagar">PAGAR</button>
+            <button v-if="estado !== 'Al día'" class="btn-pagar">PAGAR</button>
         </div>
     </div>
               
@@ -50,7 +50,7 @@
       <f7-list-item link="/rutinas/" title="Rutinas">
         <template #media><f7-icon md="material:fitness_center" ios="f7:fitness_center" /></template>
       </f7-list-item>
-      <f7-list-item link="/about/" title="Pagos">
+      <f7-list-item :link="`/historialpagos/${userId}/false`" title="Pagos">
         <template #media><f7-icon md="material:attach_money" ios="f7:attach_money" /></template>
       </f7-list-item>
       <f7-list-item link="/perfil/" title="Mi Perfil">
@@ -70,14 +70,14 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase/'; // tu archivo donde configurás Firebase
 import { f7 } from 'framework7-vue';
 import { useUserStore } from '../js/user'
-import { computed, watch , onMounted} from 'vue'
+import { computed, watch, onMounted, ref } from 'vue'
 import { getFirestore, collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
 
 export default {
   setup() {
-    const userStore = useUserStore();
-    const isLoading = computed(() => userStore.isLoading);
-
+    const userStore = useUserStore();    
+    const isLoading = ref(true); 
+    const estado = ref('Al día'); // Estado de la cuota
     const cliente = computed(() => ({
       nombre: userStore.user?.nombre || 'Invitado',
       peso: userStore.user?.peso || '--',
@@ -118,8 +118,8 @@ export default {
                 const fechaPago = new Date(ultimoPago.fechaPago.seconds * 1000);
                 const fechaVencimiento = new Date(ultimoPago.fechaVencimiento.seconds * 1000);
                 const hoy = new Date();
-        
-                const estado = hoy >= fechaPago && hoy <= fechaVencimiento ? 'Al día' : 'Pago vencido';
+                        
+                estado.value = hoy >= fechaPago && hoy <= fechaVencimiento ? 'Al día' : 'Pago vencido';
         
                 // Actualizar la sección Cuota
                 const cuotaInfo = document.querySelector('.cuota-info');
@@ -127,7 +127,7 @@ export default {
                   cuotaInfo.innerHTML = `
                     <li><strong>Último pago:</strong> ${fechaPago.toLocaleDateString()}</li>
                     <li><strong>Vencimiento:</strong> ${fechaVencimiento.toLocaleDateString()}</li>
-                    <li><strong>Estado:</strong> <span style="color: ${estado === 'Pago vencido' ? 'red' : 'inherit'};">${estado}</span></li>
+                    <li><strong>Estado:</strong> <span style="color: ${estado.value === 'Pago vencido' ? 'red' : 'inherit'};">${estado.value}</span></li>
                   `;
                 }
               } else {
@@ -136,6 +136,7 @@ export default {
             } catch (error) {
               console.error('Error al obtener el último pago:', error);
             }
+            isLoading.value = false; // Finalizar carga
           }
         }, { immediate: true });
       }
@@ -158,6 +159,8 @@ export default {
       isLoading,
       cliente,
       logout,
+      estado,
+      userId
     };
   },
 };

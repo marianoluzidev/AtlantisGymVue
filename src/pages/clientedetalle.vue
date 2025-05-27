@@ -31,16 +31,17 @@
           <f7-list-item title="Estado: ">{{ estadoCuota }}</f7-list-item>
           <f7-list-item title="Ultimo pago: ">{{ ultimoPago || 'No disponible' }}</f7-list-item>
           <f7-list-item title="Vencimiento: ">{{ vencimiento || 'No disponible' }}</f7-list-item>
+          
           <f7-list-item>
             <button class="btn-pagar" @click="showPopup = true">Registrar pago</button>
           </f7-list-item>
 
-          <f7-list-item :link="`/historialpagos/${id}`" title="Historial" after="Administrar">
+          <f7-list-item :link="`/historialpagos/${id}/true`" title="Historial" after="Administrar">
             <template #media>
               <f7-icon icon="icon-f7" />
             </template>
           </f7-list-item>
-
+          
           <f7-popup :opened="showPopup" @popup:closed="showPopup = false" class="home">
             <div class="popup-content home">
               <h2>Registrar Pago</h2>              
@@ -60,10 +61,15 @@
         </f7-list>
       </f7-card>
 
-      <f7-card title="Rutinas asignadas">
-        <f7-list simple-list dividers-ios>
+      <f7-card title="Rutinas">
+        <f7-list dividers-ios strong-ios outline-ios>
           <f7-list-item v-for="(rutina, index) in cliente.rutinas" :key="index" :title="rutina.nombre"></f7-list-item>
           <f7-list-item ><button class="btn-pagar" >Asignar rutina</button></f7-list-item>
+          <f7-list-item :link="`/historialpagos/${id}/true`" title="Rutinas" after="Administrar">
+            <template #media>
+              <f7-icon icon="icon-f7" />
+            </template>
+          </f7-list-item>
         </f7-list>
       </f7-card>
       
@@ -73,7 +79,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { doc, getDoc, collection, addDoc, getDocs } from 'firebase/firestore';
+import { doc, getDoc, collection, addDoc, getDocs, query, where, orderBy } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; // Asegúrate de que la ruta sea correcta
 
 export default {
@@ -94,6 +100,10 @@ export default {
     const paymentAmount = ref(null); // Valor predeterminado
 
     const registerPayment = async () => {
+      if (!paymentAmount.value) {
+        alert('Por favor, seleccione un monto de pago.');
+        return;
+      }
         if (paymentDate.value) {
             const fechaPago = new Date(paymentDate.value[0]);
             const fechaActual = new Date();
@@ -104,8 +114,7 @@ export default {
                 return;
             }
 
-            try {
-                console.log('Fecha de pago seleccionada:', paymentDate.value[0]);
+            try {                
 
                 // Sumar 30 días de forma segura
                 const fechaVencimiento = new Date(fechaPago);
@@ -128,16 +137,25 @@ export default {
                     usuarioId,
                 });
 
-                alert(`Pago registrado con éxito para la fecha: ${fechaPago}`);
+                const formatFecha = (timestamp) => {
+                    const date = new Date(timestamp);
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                };
+
+                alert(`Pago registrado con éxito para la fecha: ${formatFecha(fechaPago)}`);
                 paymentDate.value = null;
+                paymentAmount.value = null;
                 document.querySelector('input[placeholder="Fecha de pago"]').value = '';
             } catch (error) {
                 console.error('Error al registrar el pago:', error);
                 alert('Hubo un error al registrar el pago. Inténtelo nuevamente.');
             }
         } else {
-            console.error('No se seleccionó una fecha de pago');
             alert('Por favor, seleccione una fecha antes de registrar el pago.');
+            return;
         }
         showPopup.value = false;
     };
@@ -145,20 +163,19 @@ export default {
     onMounted(async () => {
         const clienteRef = doc(db, 'usuario', props.id);
         try {
-            console.log('ID del cliente:', props.id); // Verifica el ID del cliente
+            
             const clienteSnap = await getDoc(clienteRef);
             if (clienteSnap.exists()) {
-                cliente.value = clienteSnap.data();
-                console.log('Cliente encontrado:', cliente.value.rutinasAsignadas);
+                cliente.value = clienteSnap.data();                
 
                 // Obtener el último pago del cliente
-                const pagosQuery = collection(db, 'pago');
+                const pagosQuery = query(
+                    collection(db, 'pago'),
+                    where('usuarioId', '==', props.id),
+                    orderBy('fechaPago', 'desc')
+                );
                 const pagosSnapshot = await getDocs(pagosQuery);
-                const pagosCliente = pagosSnapshot.docs
-                    .map(doc => doc.data())
-                    .filter(pago => pago.usuarioId === props.id)
-                    .sort((a, b) => new Date(b.fechaPago) - new Date(a.fechaPago));
-                console.log('Pagos del cliente:', pagosCliente);
+                const pagosCliente = pagosSnapshot.docs.map(doc => doc.data());
                 if (pagosCliente.length > 0) {
                     const formatFecha = (timestamp) => {
                         const date = timestamp.toDate();
