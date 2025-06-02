@@ -88,8 +88,7 @@ export const useUserStore = defineStore('user', () => {
 
   // Monitor auth state (ejecutar esto en main)
   const initAuth = () => {
-    onAuthStateChanged(auth, async (firebaseUser) => {
-        console.log('onAuthStateChanged ejecutado. Usuario detectado:', firebaseUser);
+    onAuthStateChanged(auth, async (firebaseUser) => {        
       if (firebaseUser) {
         const uid = firebaseUser.uid
         const userDoc = await getDoc(doc(db, 'usuario', uid))
