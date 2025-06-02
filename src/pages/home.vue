@@ -42,7 +42,7 @@
                 <li><strong>Vencimiento:</strong> ---</li>
                 <li><strong>Estado:</strong> ---</li>
             </ul>
-            <button v-if="estado !== 'Al día'" class="btn-pagar">PAGAR</button>
+            <button v-if="estado !== 'Al día'" class="btn-pagar" @click="window.location.href='https://mpago.la/1fd9U59'">PAGAR</button>
         </div>
     </div>
               
@@ -93,14 +93,12 @@ export default {
     const userId = computed(() => userStore.user?.uid || null);
 
     watch(userId, (newUid) => {
-      if (newUid) {
-        console.log('Cliente UID cargado desde computed:', newUid);
+      if (newUid) {        
         
         const db = getFirestore();
         
         watch(userId, async (newUid) => {
-          if (newUid) {
-            console.log('Cliente UID cargado desde computed:', newUid);
+          if (newUid) {            
         
             try {
               // Consulta a Firestore

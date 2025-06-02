@@ -54,7 +54,7 @@ export default {
           ...doc.data(),
         }));
         clientes.value = listaClientes;
-        console.log('Lista de clientes:', listaClientes); // Verifica la lista de clientes
+        
         clientesAgrupados.value = agruparPorLetra(listaClientes);
       } catch (error) {
         console.error('Error al obtener los usuarios:', error);

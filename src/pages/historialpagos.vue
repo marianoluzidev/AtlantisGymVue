@@ -65,8 +65,7 @@ export default {
   },
   setup(props) {
     const pagos = ref([]);
-    const isLoading = ref(true);
-    console.log("hola:", props.actions);
+    const isLoading = ref(true);    
     const fetchPagos = async () => {
       try {
         const usuarioId = props.id;

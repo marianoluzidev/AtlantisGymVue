@@ -63,23 +63,46 @@
 
       <f7-card title="Rutinas">
         <f7-list dividers-ios strong-ios outline-ios>
-          <f7-list-item v-for="(rutina, index) in cliente.rutinas" :key="index" :title="rutina.nombre"></f7-list-item>
-          <f7-list-item ><button class="btn-pagar" >Asignar rutina</button></f7-list-item>
-          <f7-list-item :link="`/historialpagos/${id}/true`" title="Rutinas" after="Administrar">
+          <f7-list-item
+            v-for="(rutina, index) in cliente.rutinas"
+            :key="rutina.id"
+            :title="rutina.nombre" after="quitar" link="#" @click="quitarRutina(rutina.id)">            
             <template #media>
-              <f7-icon icon="icon-f7" />
+              <f7-icon icon="minus" />
             </template>
           </f7-list-item>
+          <f7-list-item>
+            <button class="btn-pagar" @click="abrirPopupAsignarRutina">Asignar rutina</button>
+          </f7-list-item>
+          <f7-popup :opened="showAssignPopup" @popup:closed="showAssignPopup = false" class="home">
+            <div class="popup-content home">
+              <h2>Asignar Rutina</h2>
+              <f7-card title="Rutinas Disponibles">
+                <f7-list strong-ios outline-ios>
+                  <f7-list-item
+                    v-for="rutina in rutinasDisponibles"
+                    :key="rutina.id"
+                    :title="rutina.nombre" after="Asignar" link="#" @click="asignarRutina(rutina.id)">
+                     <template #media>
+                        <f7-icon icon="plus" />
+                    </template>
+                  </f7-list-item>
+                </f7-list>
+              </f7-card>
+              <div class="button-group">
+                <button class="btn-pagar" @click="showAssignPopup = false">Cerrar</button>
+              </div>
+            </div>
+          </f7-popup>
         </f7-list>
-      </f7-card>
-      
+      </f7-card>      
     </div>
   </f7-page>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
-import { doc, getDoc, collection, addDoc, getDocs, query, where, orderBy } from 'firebase/firestore';
+import { doc, getDoc, collection, addDoc, getDocs, query, where, orderBy, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; // Asegúrate de que la ruta sea correcta
 
 export default {
@@ -90,6 +113,62 @@ export default {
     },
   },
   setup(props) {
+    const abrirPopupAsignarRutina = () => {      
+      cargarRutinasDisponibles();
+      showAssignPopup.value = true;
+    };
+    const showAssignPopup = ref(false);
+    const rutinasDisponibles = ref([]);
+  
+    const asignarRutina = async (rutinaId) => {
+      if (confirm('¿Quiere asignar la rutina?')) {
+        try {
+          const clienteRef = doc(db, 'usuario', props.id);
+          const clienteSnap = await getDoc(clienteRef);
+          if (clienteSnap.exists()) {
+            const clienteData = clienteSnap.data();
+            const rutinasAsignadas = clienteData.rutinasAsignadas || [];
+            rutinasAsignadas.push(rutinaId);
+  
+            // Actualizar en la base de datos
+            await updateDoc(clienteRef, { rutinasAsignadas });
+  
+            // Actualizar en el frontend
+            const rutinaAsignada = rutinasDisponibles.value.find(rutina => rutina.id === rutinaId);
+            cliente.value.rutinas.push({ id: rutinaId, nombre: rutinaAsignada?.nombre || 'Nombre no disponible' });
+            alert('Rutina asignada con éxito.');
+            showAssignPopup.value = false; // Cerrar el popup después de asignar
+          } else {
+            alert('No se encontró el cliente.');
+          }
+        } catch (error) {
+          console.error('Error al asignar la rutina:', error);
+          alert('Hubo un error al asignar la rutina.');
+        }
+      }
+    };
+  
+    const cargarRutinasDisponibles = async () => {
+      try {
+        console.log('Cargando rutinas disponibles...');
+        const rutinasRef = collection(db, 'rutinas');
+        const rutinasSnap = await getDocs(rutinasRef);
+        const todasRutinas = rutinasSnap.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));        
+        const rutinasAsignadasIds = cliente.value?.rutinas?.map(r => r.id) || [];        
+        rutinasDisponibles.value = todasRutinas.filter(
+          rutina => !rutinasAsignadasIds.includes(rutina.id)
+        );
+      } catch (error) {
+        console.error('Error al cargar rutinas disponibles:', error);
+      }
+    };
+  
+    onMounted(() => {
+      cargarRutinasDisponibles();
+    });
     const cliente = ref(null);
     const isLoading = ref(true);
     const showPopup = ref(false);
@@ -98,6 +177,32 @@ export default {
     const vencimiento = ref(null);
     const paymentDate = ref(null);
     const paymentAmount = ref(null); // Valor predeterminado
+
+    const quitarRutina = async (rutinaId) => {
+      if (confirm('¿Desea quitar esta rutina?')) {
+        try {
+          const clienteRef = doc(db, 'usuario', props.id);
+          const clienteSnap = await getDoc(clienteRef);
+          if (clienteSnap.exists()) {
+            const clienteData = clienteSnap.data();
+            const rutinasAsignadas = clienteData.rutinasAsignadas || [];
+            const nuevasRutinas = rutinasAsignadas.filter(id => id !== rutinaId);
+
+            // Actualizar en la base de datos
+            await updateDoc(clienteRef, { rutinasAsignadas: nuevasRutinas });
+
+            // Actualizar en el frontend
+            cliente.value.rutinas = cliente.value.rutinas.filter(rutina => rutina.id !== rutinaId);
+            alert('Rutina quitada con éxito.');
+          } else {
+            alert('No se encontró el cliente.');
+          }
+        } catch (error) {
+          console.error('Error al quitar la rutina:', error);
+          alert('Hubo un error al quitar la rutina.');
+        }
+      }
+    };
 
     const registerPayment = async () => {
       if (!paymentAmount.value) {
@@ -125,10 +230,7 @@ export default {
 
                 const monto = paymentAmount.value;
                 const usuarioId = props.id;
-                console.log(paymentAmount.value);
-                console.log('ID del cliente:', usuarioId);
-                console.log('Fecha de pago:', fechaPago);
-
+                
                 await addDoc(collection(db, 'pago'), {
                     fechaPago,
                     fechaVencimiento,
@@ -208,10 +310,11 @@ export default {
               const rutinaSnap = await getDoc(rutinaRef);
               if (rutinaSnap.exists()) {
                 const rutinaData = rutinaSnap.data();
-                return {
+                return {                  
+                  asignarRutina,
                   id: rutinaId,
                   ...rutinaData
-                };
+                };                                            
               } else {
                 return { id: rutinaId, nombre: 'Nombre no disponible' };
               }
@@ -238,6 +341,11 @@ export default {
       estadoCuota,
       ultimoPago,
       vencimiento,
+      quitarRutina,
+      abrirPopupAsignarRutina,
+      showAssignPopup,
+      rutinasDisponibles,
+      asignarRutina,
     };
   },
 };
