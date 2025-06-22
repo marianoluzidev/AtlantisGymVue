@@ -46,7 +46,7 @@
         </div>
     </div>
               
-    <f7-list strong inset >
+    <f7-list strong inset  >
       <f7-list-item link="/rutinas/" title="Rutinas">
         <template #media><f7-icon md="material:fitness_center" ios="f7:fitness_center" /></template>
       </f7-list-item>
