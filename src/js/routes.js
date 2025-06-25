@@ -10,7 +10,10 @@ import RegisterPage from '../pages/register.vue'
 import PerfilePage from '../pages/perfil.vue';
 import RutinasPage from '../pages/rutinas.vue';
 import RutinaDetallePage from '../pages/rutinadetalle.vue';
+import RutinasAdminPage from '../pages/rutinasadmin.vue';
+import RutinaSimpleDetallePage from '../pages/rutinasimpledetalle.vue';
 import AdminPage from '../pages/admin.vue';
+import TimerPage from '../pages/timer.vue';
 
 //admin
 import ClientesPage from '../pages/clientes.vue';
@@ -42,6 +45,10 @@ var routes = [
     path: '/rutinas/',
     component: RutinasPage,
   },
+    {
+    path: '/timer/',
+    component: TimerPage,
+  },
   {
     path: '/admin/',
     component: AdminPage,
@@ -61,6 +68,14 @@ var routes = [
   {
     path: '/rutinadetalle/:id',
     component: RutinaDetallePage,
+  },
+  {
+    path: '/rutinasadmin/',
+    component: RutinasAdminPage,
+  },
+  {
+    path: '/rutinasimpledetalle/:id',
+    component: RutinaSimpleDetallePage,
   },
   {
     path: '/catalog/',

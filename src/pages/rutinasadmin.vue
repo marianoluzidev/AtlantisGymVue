@@ -58,16 +58,9 @@
       
       const fetchRutinas = async () => {
         await fetchUserRutinas(); // Refrescar la información de rutinas asignadas
-        try {
-          const userRutinasIds = userStore.user?.rutinasAsignadas || [];
-          console.log('Rutinas asignadas al usuario:', userRutinasIds);
-          if (userRutinasIds.length === 0) {
-            isLoading.value = false; // Finalizar carga si no hay rutinas
-            return
-          };
+        try {          
           const rutinasQuery = query(
-            collection(db, 'rutinas'),
-            where('id', 'in', userRutinasIds)
+            collection(db, 'rutinas')            
           );
           
           const querySnapshot = await getDocs(rutinasQuery);
