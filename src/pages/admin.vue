@@ -14,6 +14,12 @@
           <f7-icon md="material:group" ios="f7:group" />
         </template>
       </f7-list-item>
+      <f7-list-item
+          title ="Rutinas"
+          link="/rutinasadmin/"
+        >        
+        <template #media><f7-icon md="material:fitness_center" ios="f7:fitness_center" /></template>
+      </f7-list-item>
       </f7-list>
     </f7-page>
   
