@@ -5,7 +5,7 @@
       <p>Cargando...</p>
     </div>
     <!-- Top Navbar -->
-    <f7-navbar class="app-font" title="ATLANTIS GYM ( test v0.13)"/>
+    <f7-navbar class="app-font" title="ATLANTIS GYM ( test v0.14)"/>
     
     <!-- Motivational Image + Quote -->
     <div class="motivational-banner">
@@ -79,7 +79,7 @@ export default {
     const isLoading = ref(true); 
     const estado = ref('Al día'); // Estado de la cuota
     const cliente = computed(() => ({
-      nombre: userStore.user?.nombre || 'Invitado',
+      nombre: userStore.user?.nombre || '',
       peso: userStore.user?.peso || '--',
       altura: userStore.user?.altura || '--',
       objetivo: userStore.user?.objetivo || '--',
@@ -87,7 +87,12 @@ export default {
     }));
 
     onMounted(async () => {
-      await userStore.fetchUserData?.();      
+      await userStore.fetchUserData?.();
+
+      // const { nombre, apellido, peso, altura, objetivo } = userStore.user || {};
+      // if (!nombre || !apellido || !peso || !altura || !objetivo) {
+      //   f7.views.main.router.navigate('/perfil/');
+      // }
     });
 
     const userId = computed(() => userStore.user?.uid || null);
