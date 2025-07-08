@@ -13,7 +13,7 @@
       </f7-button>
     </f7-list>
     <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-      <a>(test 0.14)</a>
+      <a>{{ `ATLANTIS GYM (${version})` }}</a>
     </div>
   </f7-page>
 </template>
@@ -23,12 +23,14 @@ import { auth, signInWithEmailAndPassword, provider, signInWithPopup, db } from 
 import { f7 } from 'framework7-vue';
 import { useUserStore } from '../js/user';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { appConfig } from '../js/config';
 
-export default {
+export default {  
   data() {
     return {
       email: '',
       password: '',
+      version: appConfig.version
     };
   },
   methods: {
