@@ -250,3 +250,23 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: #fff;
+  color: #444;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.google-btn:hover {
+  background-color: #f7f7f7;
+}
+
+.google-icon {
+  width: 20px;
+  height: 20px;
+}
