@@ -134,18 +134,22 @@ export default {
 
     const logout = async () => {
       try {
-        await signOut(auth);
-        userStore.clearUser();
-        userStore.user = null;
-        ultimoPago.value = null;
-        estado.value = 'Al día';
-        isLoading.value = false;
-        cargandoDatos.value = false;
-        f7.views.main.router.navigate('/login/');
+        await signOut(auth)
+
+        userStore.setUser(null) // esto actualiza la reactividad correctamente
+
+        ultimoPago.value = null
+        estado.value = 'Al día'
+        isLoading.value = false
+        cargandoDatos.value = false
+
+        const mainView = f7.views.get('#view-home')
+        mainView?.router?.navigate('/login/', { reloadCurrent: true })
+
       } catch (error) {
-        console.error('Error al hacer logout:', error);
+        console.error('Error al hacer logout:', error)
       }
-    };
+    }
 
     return {
       isLoading,

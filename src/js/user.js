@@ -10,7 +10,11 @@ export const useUserStore = defineStore('user', () => {
   const user = ref(null);
 
   const setUser = (data) => {
-    if (!data || !data.uid) return;
+    if (!data) {
+      user.value = null;
+      return;
+    }
+
     user.value = {
       uid: data.uid || '',
       email: data.email || '',
@@ -22,9 +26,7 @@ export const useUserStore = defineStore('user', () => {
     };
   };
 
-  const clearUser = () => {
-     user.value = null;
-   };
+  const clearUser = () => setUser(null);
 
   const login = async (email, password) => {
     try {
@@ -53,26 +55,26 @@ export const useUserStore = defineStore('user', () => {
   let unsubscribeAuth = null;
 
   const initAuth = () => {
-      if (unsubscribeAuth) unsubscribeAuth(); // Detener cualquier suscripción previa
-      unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
-          if (firebaseUser) {
-              const uid = firebaseUser.uid;
-              const userRef = doc(db, 'usuario', uid);
-              const userSnap = await getDoc(userRef);
-              const userData = userSnap.exists() ? userSnap.data() : {};
+    if (unsubscribeAuth) unsubscribeAuth(); // Detener cualquier suscripción previa
+    unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const uid = firebaseUser.uid;
+        const userRef = doc(db, 'usuario', uid);
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.exists() ? userSnap.data() : {};
 
-              setUser({
-                  uid,
-                  email: firebaseUser.email,
-                  ...userData
-              });
-          } else {
-              user.value = null;
-              if (window?.f7?.views?.main) {
-                  window.f7.views.main.router.navigate('/login/');
-              }
-          }
-      });
+        setUser({
+          uid,
+          email: firebaseUser.email,
+          ...userData
+        });
+      } else {
+        user.value = null;
+        if (window?.f7?.views?.main) {
+          window.f7.views.main.router.navigate('/login/');
+        }
+      }
+    });
   };
 
   return {

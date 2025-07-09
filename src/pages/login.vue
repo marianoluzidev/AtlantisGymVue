@@ -1,4 +1,3 @@
-// login.vue corregido con validaciones de datos
 <template>
   <f7-page class="home">
     <f7-navbar title="Login"></f7-navbar>
@@ -41,6 +40,7 @@ export default {
         f7.views.main.router.navigate('/');
       } catch (error) {
         console.log(error);
+        f7.dialog.alert('Error al iniciar sesión. Verifica tus credenciales.');
       }
     },
     signup() {
@@ -95,6 +95,7 @@ export default {
         }
       } catch (error) {
         console.error("Error al iniciar sesión con Google:", error);
+        f7.dialog.alert('No se pudo iniciar sesión con Google.');
       }
     }
   }
