@@ -28,6 +28,9 @@
       <f7-toolbar v-if="userStore.user && !isLoginRoute" tabbar icons bottom>
           <f7-link tab-link="#view-home" tab-link-active icon-ios="f7:house_fill" icon-md="material:home" text="Home" @click="navigateToHome" />
           <f7-link tab-link="#view-timer" icon-ios="f7:square_list_fill" icon-md="material:admin_panel_settings" text="Timer" />
+          <f7-link tab-link="#view-notificaciones" icon-ios="f7:bell_fill" icon-md="material:notifications" text="Notificaciones">
+            <span class="badge color-red" v-if="notificationCount > 0">{{ notificationCount }}</span>
+          </f7-link>
           <f7-link tab-link="#view-admin" icon-ios="f7:square_list_fill" icon-md="material:admin_panel_settings" text="Admin" />
           <f7-link tab-link="#view-settings" icon-ios="f7:gear" icon-md="material:settings" text="Settings" />
       </f7-toolbar>
@@ -36,6 +39,7 @@
       <f7-view id="view-home" main tab tab-active url="/" />
       <f7-view id="view-catalog" name="catalog" tab url="/catalog/" />
       <f7-view id="view-settings" name="settings" tab url="/settings/" />
+      <f7-view id="view-notificaciones" name="notificaciones" tab url="/notificaciones/" />
       <f7-view id="view-admin" name="admin" tab url="/admin/" />
       <f7-view id="view-timer" name="timer" tab url="/timer/" />
     </f7-views>
@@ -67,10 +71,12 @@ import { useRoute } from 'vue-router'
 import store from '../js/store'
 import routes from '../js/routes'
 import { useUserStore } from '../js/user'
+import { useNotificacionesStore } from '../js/useNotificaciones';
 
 const auth = getAuth()
 const userStore = useUserStore()
 const route = useRoute()
+const notiStore = useNotificacionesStore();
 
 const f7params = {
   name: 'AtlantisGym',

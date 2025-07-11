@@ -22,7 +22,8 @@ export const useUserStore = defineStore('user', () => {
       apellido: data.apellido || '',
       peso: data.peso || '',
       altura: data.altura || '',
-      objetivo: data.objetivo || ''
+      objetivo: data.objetivo || '',
+      admin: data.admin || false
     };
   };
 
