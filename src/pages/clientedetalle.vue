@@ -102,8 +102,10 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { doc, getDoc, collection, addDoc, getDocs, query, where, orderBy, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, addDoc, getDocs, query, where, orderBy, updateDoc, serverTimestamp  } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; // Asegúrate de que la ruta sea correcta
+import { useUserStore } from '../js/user';
+import { useNotificacionesStore } from '../js/useNotificaciones';
 
 export default {
   props: {
@@ -119,7 +121,9 @@ export default {
     };
     const showAssignPopup = ref(false);
     const rutinasDisponibles = ref([]);
-  
+    const userStore = useUserStore();
+    const notiStore = useNotificacionesStore();
+
     const asignarRutina = async (rutinaId) => {
       if (confirm('¿Quiere asignar la rutina?')) {
         try {
@@ -129,15 +133,34 @@ export default {
             const clienteData = clienteSnap.data();
             const rutinasAsignadas = clienteData.rutinasAsignadas || [];
             rutinasAsignadas.push(rutinaId);
-  
+
             // Actualizar en la base de datos
             await updateDoc(clienteRef, { rutinasAsignadas });
-  
+            
+            await updateDoc(clienteRef, {
+              rutinasAsignadas,
+              ultimaAsignacionRutina: serverTimestamp() // 👈 nueva línea
+            });
+
             // Actualizar en el frontend
             const rutinaAsignada = rutinasDisponibles.value.find(rutina => rutina.id === rutinaId);
             cliente.value.rutinas.push({ id: rutinaId, nombre: rutinaAsignada?.nombre || 'Nombre no disponible' });
+
+            // Notificación al cliente
+            const admin = userStore.user;
+            if (admin && admin.uid) {
+              const mensaje = `${admin.nombre} ${admin.apellido} le ha asignado una nueva rutina`;
+              await notiStore.enviarNotificacion({
+                titulo: 'Nueva rutina asignada',
+                mensaje,
+                paraUid: props.id,
+                deUid: admin.uid,
+                tipo: 'usuario'
+              });
+            }
+
             alert('Rutina asignada con éxito.');
-            showAssignPopup.value = false; // Cerrar el popup después de asignar
+            showAssignPopup.value = false;
           } else {
             alert('No se encontró el cliente.');
           }

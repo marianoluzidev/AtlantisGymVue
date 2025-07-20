@@ -14,6 +14,7 @@ import RutinasAdminPage from '../pages/rutinasadmin.vue';
 import RutinaSimpleDetallePage from '../pages/rutinasimpledetalle.vue';
 import AdminPage from '../pages/admin.vue';
 import TimerPage from '../pages/timer.vue';
+import NotificacionesPage from '../pages/notificaciones.vue';
 
 //admin
 import ClientesPage from '../pages/clientes.vue';
@@ -48,6 +49,10 @@ var routes = [
     {
     path: '/timer/',
     component: TimerPage,
+  },
+  {
+    path: '/notificaciones/',
+    component: NotificacionesPage,
   },
   {
     path: '/admin/',
