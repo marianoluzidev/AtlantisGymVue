@@ -26,9 +26,12 @@
 
     <!-- Botón para pedir nueva rutina -->
     <f7-block>
-      <f7-button fill @click="pedirNuevaRutina">
+      <f7-button fill @click="pedirNuevaRutina" :disabled="!puedePedirRutina">
         Pedir nueva rutina
       </f7-button>
+      <p v-if="!puedePedirRutina" class="text-color-gray text-align-center mt-2">
+        Solo podés solicitar una rutina cada 30 días.
+      </p>
     </f7-block>
   </f7-page>
 </template>
@@ -48,6 +51,22 @@ export default {
 
     const rutinas = ref([]);
     const isLoading = ref(true);
+
+    const puedePedirRutina = ref(true);
+
+    const verificarSiPuedePedir = async () => {
+      const userRef = doc(db, 'usuario', userStore.user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        if (data.ultimaAsignacionRutina) {
+          const fechaUltima = data.ultimaAsignacionRutina.toDate();
+          const ahora = new Date();
+          const dias = (ahora - fechaUltima) / (1000 * 60 * 60 * 24);
+          puedePedirRutina.value = dias >= 30;
+        }
+      }
+    };
 
     const fetchUserRutinas = async () => {
       try {
