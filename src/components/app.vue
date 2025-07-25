@@ -71,7 +71,9 @@ import { useRoute } from 'vue-router'
 import store from '../js/store'
 import routes from '../js/routes'
 import { useUserStore } from '../js/user'
-import { useNotificacionesStore } from '../js/useNotificaciones';
+import { useNotificacionesStore, iniciarManejoFCM } from '../js/useNotificaciones';
+import { solicitarPermisoNotificacion, escucharMensajes } from '../firebase/firebase';
+
 
 const auth = getAuth()
 const userStore = useUserStore()
@@ -97,6 +99,23 @@ onMounted(() => {
     onAuthStateChanged(auth, (currentUser) => {
         try {
             userStore.setUser(currentUser)
+            console.log('Usuario autenticado:', currentUser)
+
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker
+                .register('/firebase-messaging-sw.js')
+                .then((registration) => {
+                  console.log('✅ Service Worker registrado:', registration);
+                })
+                .catch((error) => {
+                  console.error('❌ Error al registrar Service Worker:', error);
+                });
+            }
+
+
+            solicitarPermisoNotificacion();
+            escucharMensajes();
+            iniciarManejoFCM();
             if (!currentUser) {
                 const mainView = f7.views.get('#view-home')
                 if (mainView?.router) {

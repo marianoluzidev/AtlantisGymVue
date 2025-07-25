@@ -62,8 +62,8 @@ export default {
         if (data.ultimaAsignacionRutina) {
           const fechaUltima = data.ultimaAsignacionRutina.toDate();
           const ahora = new Date();
-          const dias = (ahora - fechaUltima) / (1000 * 60 * 60 * 24);
-          puedePedirRutina.value = dias >= 30;
+          const dias = (ahora - fechaUltima) / (1000 * 60 * 60 * 24);          
+          puedePedirRutina.value = dias >= 30;          
         }
       }
     };
@@ -74,7 +74,7 @@ export default {
           console.error('El ID del usuario no está definido.');
           return;
         }
-
+        verificarSiPuedePedir();
         const userRef = doc(db, 'usuario', userStore.user.uid);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
@@ -162,7 +162,8 @@ export default {
     return {
       rutinas,
       isLoading,
-      pedirNuevaRutina
+      pedirNuevaRutina,
+      puedePedirRutina
     };
   }
 };
