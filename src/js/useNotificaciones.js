@@ -86,7 +86,8 @@ export const useNotificacionesStore = defineStore('notificaciones', () => {
   };
 
   // 📤 Enviar una notificación
-  const enviarNotificacion = async ({ titulo, mensaje, paraUid = null, deUid, tipo = 'usuario' }) => {    
+  const enviarNotificacion = async ({ titulo, mensaje, paraUid = null, deUid, tipo = 'usuario' }) => {
+    console.log("📤 Llamada a enviarNotificacion con datos:", { titulo, mensaje, paraUid, deUid, tipo });
     await addDoc(collection(db, 'notificaciones'), {
       titulo,
       mensaje,

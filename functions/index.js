@@ -6,6 +6,7 @@ const { getMessaging } = require("firebase-admin/messaging");
 initializeApp();
 
 exports.enviarPushNotificacion = onDocumentCreated("notificaciones/{id}", async (event) => {
+  console.log("📥 Evento recibido - ID:", event.id);
   console.log("📥 Evento recibido:", JSON.stringify(event));
 
   const noti = event.data?.data();
