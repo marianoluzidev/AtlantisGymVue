@@ -149,6 +149,7 @@ export default {
             // Notificación al cliente
             const admin = userStore.user;
             if (admin && admin.uid) {
+              console.log("envio una notificacion");
               const mensaje = `${admin.nombre} ${admin.apellido} le ha asignado una nueva rutina`;
               await notiStore.enviarNotificacion({
                 titulo: 'Nueva rutina asignada',

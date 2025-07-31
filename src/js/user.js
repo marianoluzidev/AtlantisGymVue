@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore, doc, getDoc,updateDoc, setDoc  } from 'firebase/firestore';
+import { solicitarPermisoNotificacion, escucharMensajes } from '../firebase/firebase';
 
 const auth = getAuth();
 const db = getFirestore();
@@ -63,12 +64,20 @@ export const useUserStore = defineStore('user', () => {
         const userRef = doc(db, 'usuario', uid);
         const userSnap = await getDoc(userRef);
         const userData = userSnap.exists() ? userSnap.data() : {};
-
+        
         setUser({
           uid,
           email: firebaseUser.email,
           ...userData
         });
+
+        const token = await solicitarPermisoNotificacion();
+        if (token) {
+          await updateDoc(doc(db, 'usuario', uid), {
+            fcmToken: token,
+          });
+        }
+
       } else {
         user.value = null;
         if (window?.f7?.views?.main) {
@@ -78,11 +87,32 @@ export const useUserStore = defineStore('user', () => {
     });
   };
 
+  const registerUser = async (email, password, userData) => {
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      const uid = cred.user.uid;
+
+      const userDoc = {
+        uid,
+        email,
+        ...userData, // nombre, apellido, peso, etc.
+        admin: false // por defecto no admin
+      };
+
+      await setDoc(doc(db, 'usuario', uid), userDoc);
+      setUser(userDoc);
+    } catch (error) {
+      console.error('❌ Error al registrar:', error);
+      throw error;
+    }
+  };
+
   return {
     user,
     setUser,
     initAuth,
     login,
-    clearUser
+    clearUser,
+    registerUser
   };
 });

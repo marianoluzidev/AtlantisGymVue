@@ -24,7 +24,6 @@
     <!-- Views y tabbar -->
     <f7-views tabs class="safe-areas">
 
-      <!-- Tabbar solo si el usuario está logueado y no está en /login -->
       <f7-toolbar v-if="userStore.user && !isLoginRoute" tabbar icons bottom>
           <f7-link tab-link="#view-home" tab-link-active icon-ios="f7:house_fill" icon-md="material:home" text="Home" @click="navigateToHome" />
           <f7-link tab-link="#view-timer" icon-ios="f7:square_list_fill" icon-md="material:admin_panel_settings" text="Timer" />
@@ -34,6 +33,7 @@
           <f7-link tab-link="#view-admin" icon-ios="f7:square_list_fill" icon-md="material:admin_panel_settings" text="Admin" />
           <f7-link tab-link="#view-settings" icon-ios="f7:gear" icon-md="material:settings" text="Settings" />
       </f7-toolbar>
+
 
       <!-- Tabs / Views -->
       <f7-view id="view-home" main tab tab-active url="/" />
@@ -71,7 +71,9 @@ import { useRoute } from 'vue-router'
 import store from '../js/store'
 import routes from '../js/routes'
 import { useUserStore } from '../js/user'
-import { useNotificacionesStore } from '../js/useNotificaciones';
+import { useNotificacionesStore, iniciarManejoFCM } from '../js/useNotificaciones';
+import { solicitarPermisoNotificacion, escucharMensajes } from '../firebase/firebase';
+
 
 const auth = getAuth()
 const userStore = useUserStore()
@@ -97,6 +99,23 @@ onMounted(() => {
     onAuthStateChanged(auth, (currentUser) => {
         try {
             userStore.setUser(currentUser)
+            console.log('Usuario autenticado:', currentUser)
+
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker
+                .register('/firebase-messaging-sw.js')
+                .then((registration) => {
+                  console.log('✅ Service Worker registrado:', registration);
+                })
+                .catch((error) => {
+                  console.error('❌ Error al registrar Service Worker:', error);
+                });
+            }
+
+
+            solicitarPermisoNotificacion();
+            escucharMensajes();
+            iniciarManejoFCM();
             if (!currentUser) {
                 const mainView = f7.views.get('#view-home')
                 if (mainView?.router) {
