@@ -24,7 +24,6 @@
     <!-- Views y tabbar -->
     <f7-views tabs class="safe-areas">
 
-      <!-- Tabbar solo si el usuario está logueado y no está en /login -->
       <f7-toolbar v-if="userStore.user && !isLoginRoute" tabbar icons bottom>
           <f7-link tab-link="#view-home" tab-link-active icon-ios="f7:house_fill" icon-md="material:home" text="Home" @click="navigateToHome" />
           <f7-link tab-link="#view-timer" icon-ios="f7:square_list_fill" icon-md="material:admin_panel_settings" text="Timer" />
@@ -34,6 +33,7 @@
           <f7-link tab-link="#view-admin" icon-ios="f7:square_list_fill" icon-md="material:admin_panel_settings" text="Admin" />
           <f7-link tab-link="#view-settings" icon-ios="f7:gear" icon-md="material:settings" text="Settings" />
       </f7-toolbar>
+
 
       <!-- Tabs / Views -->
       <f7-view id="view-home" main tab tab-active url="/" />

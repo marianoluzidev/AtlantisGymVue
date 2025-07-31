@@ -1,4 +1,3 @@
-// app.js corregido con manejo de botón atrás
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import Framework7 from 'framework7/lite-bundle';
@@ -17,38 +16,46 @@ app.use(createPinia());
 registerComponents(app);
 app.mount('#app');
 
+const tabHistory = [];
+
 f7ready(() => {
   window.f7 = f7;
   const store = useUserStore();
   store.initAuth();
 
-  // Manejo del botón atrás
+  let currentTab = 'view-home'; // tab inicial por defecto
+
+  f7.on('tabShow', (tabEl) => {
+    const newTabId = tabEl.id;
+    console.log('Tab cambiado a:', newTabId);
+    if (newTabId !== currentTab) {
+      tabHistory.push(currentTab);
+      currentTab = newTabId;
+    }
+  });
+
   CapacitorApp.addListener('backButton', () => {
     const view = f7.views.main;
     const router = view.router;
-    const currentRoute = router.currentRoute;
 
-    // Si hay historial, volver atrás
+    // Si hay historial de navegación normal (no tabs)
     if (router.history.length > 1) {
       router.back();
       return;
     }
 
-    // Si estás en una tab, no hay historial que volver, evitar salir
-    const activeTab = document.querySelector('.tab.tab-active');
-    const activeTabId = activeTab?.id;
-
-    // Tab activa es admin/home/etc., evitar salir
-    const tabsQueNoSalen = ['tab-home', 'tab-admin', 'tab-notificaciones'];
-    if (tabsQueNoSalen.includes(activeTabId)) {
-      // Opcional: mostrar mensaje o ignorar
+    // Si hay historial de tabs, volver al anterior
+    if (tabHistory.length > 0) {
+      const prevTab = tabHistory.pop();
+      currentTab = prevTab;
+      const link = document.querySelector(`.tab-link[tab-link="#${prevTab}"]`);
+      if (link) link.click();
       return;
     }
 
-    // Estás en home sin historial: preguntar si querés salir
+    // Si estás en el tab inicial, preguntar si querés salir
     f7.dialog.confirm('¿Querés salir de la app?', 'Salir', () => {
       CapacitorApp.exitApp();
     });
   });
-  
 });
