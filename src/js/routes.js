@@ -24,6 +24,8 @@ import DynamicRoutePage from '../pages/dynamic-route.vue';
 import RequestAndLoad from '../pages/request-and-load.vue';
 import NotFoundPage from '../pages/404.vue';
 import historialpagosPage from '../pages/historialpagos.vue';
+import RecuperarPassword from '../pages/recuperarPassword.vue';
+
 
 var routes = [
   {
@@ -77,6 +79,10 @@ var routes = [
   {
     path: '/rutinasadmin/',
     component: RutinasAdminPage,
+  },
+  {
+    path: '/recuperarPassword/',
+    component: RecuperarPassword,
   },
   {
     path: '/rutinasimpledetalle/:id',

@@ -10,6 +10,11 @@
         <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" class="google-icon" />
         Iniciar sesión con Google
       </f7-button>
+      <div class="link-recuperar-container">
+        <f7-link href="/recuperarPassword/" class="text-color-blue">
+          ¿Olvidaste tu contraseña?
+        </f7-link>
+      </div>
     </f7-list>
     <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
       <a>{{ `ATLANTIS GYM (${version})` }}</a>
@@ -119,5 +124,9 @@ export default {
 .google-icon {
   width: 20px;
   height: 20px;
+}
+.link-recuperar-container {
+  text-align: center;
+  margin-top: 20px;
 }
 </style>
