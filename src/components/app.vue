@@ -30,8 +30,14 @@
           <f7-link tab-link="#view-notificaciones" class="notificaciones-icono" icon-ios="f7:bell_fill" icon-md="material:notifications" text="Alertas">
             <span class="noti-badge" v-if="notificationCount > 0">{{ notificationCount }}</span>
           </f7-link>
-          <f7-link tab-link="#view-admin" icon-ios="f7:square_list_fill" icon-md="material:admin_panel_settings" text="Admin" />
-          <f7-link tab-link="#view-settings" icon-ios="f7:gear" icon-md="material:settings" text="Settings" />
+          <f7-link
+            v-if="userStore.user?.admin"
+            tab-link="#view-admin"
+            icon-ios="f7:square_list_fill"
+            icon-md="material:admin_panel_settings"
+            text="Admin"
+          />
+          <!--<f7-link tab-link="#view-settings" icon-ios="f7:gear" icon-md="material:settings" text="Settings" />--->
       </f7-toolbar>
 
 

@@ -64,7 +64,7 @@ export const useUserStore = defineStore('user', () => {
         const userRef = doc(db, 'usuario', uid);
         const userSnap = await getDoc(userRef);
         const userData = userSnap.exists() ? userSnap.data() : {};
-        
+                
         setUser({
           uid,
           email: firebaseUser.email,
