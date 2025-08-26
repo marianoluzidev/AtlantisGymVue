@@ -23,24 +23,19 @@ f7ready(() => {
   const store = useUserStore();
   store.initAuth();
 
-  // Detectar actualizaciones del Service Worker
+    // Auto-update + recarga al activar nueva versión
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      console.log('🔄 Service Worker actualizado. Recargando la página...');
-      window.location.reload();
-    });
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js').then((reg) => {
+        if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
 
-    navigator.serviceWorker.ready.then((registration) => {
-      registration.addEventListener('updatefound', () => {
-        const newWorker = registration.installing;
-        if (newWorker) {
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('⚡ Nueva versión disponible. Activando...');
-              newWorker.postMessage({ type: 'SKIP_WAITING' });
-            }
-          });
-        }
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          window.location.reload();
+        });
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') reg.update();
+        });
       });
     });
   }

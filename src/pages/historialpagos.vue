@@ -50,7 +50,7 @@ import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { collection, query, where, orderBy, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
-
+import { alert,confirm } from '../composables/useAlert'
 
 export default {
   props: {
@@ -89,14 +89,21 @@ export default {
     };
 
     const eliminarPago = async (pagoId) => {
-      if (confirm('¿Desea eliminar este pago?')) {
+      const ok = await confirm({
+          title: 'Confirmar',
+          message: '¿Desea eliminar este pago?',
+          type: 'warning',
+          confirmText: 'Sí',
+          cancelText: 'Cancelar',
+      });
+      if (ok) {
         try {
           await deleteDoc(doc(db, 'pago', pagoId));
-          pagos.value = pagos.value.filter(pago => pago.id !== pagoId);
-          alert('Pago eliminado con éxito.');
+          pagos.value = pagos.value.filter(pago => pago.id !== pagoId);          
+          alert({message: 'Pago eliminado con éxito.'});
         } catch (error) {
           console.error('Error al eliminar el pago:', error);
-          alert('Hubo un error al eliminar el pago.');
+          alert({message: 'Hubo un error al eliminar el pago.'});
         }
       }
     };

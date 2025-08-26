@@ -25,7 +25,11 @@ import RequestAndLoad from '../pages/request-and-load.vue';
 import NotFoundPage from '../pages/404.vue';
 import historialpagosPage from '../pages/historialpagos.vue';
 import RecuperarPassword from '../pages/recuperarPassword.vue';
+import PagoPage from '../pages/pago.vue';
 
+import PagoExitoso from '../pages/PagoExitoso.vue';
+import PagoFallido from '../pages/PagoFallido.vue';
+import PagoPendiente from '../pages/PagoPendiente.vue';
 
 var routes = [
   {
@@ -63,6 +67,22 @@ var routes = [
   {
     path: '/clientes/',
     component: ClientesPage,
+  },
+    {
+    path: '/pago/',
+    component: PagoPage,
+  },
+  { 
+    path: '/pago-exitoso', 
+    component: PagoExitoso 
+  },
+  { 
+    path: '/pago-fallido', 
+    component: PagoFallido 
+  },
+  { 
+    path: '/pago-pendiente', 
+    component: PagoPendiente 
   },
   {
     path: '/clientedetalle/:id',

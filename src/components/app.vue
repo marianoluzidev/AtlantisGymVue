@@ -66,8 +66,14 @@
       </f7-view>
     </f7-popup>
 
+    <router-view />
+    <AppAlert /> <!-- vive en el root -->
   </f7-app>
 </template>
+
+
+
+
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
@@ -79,7 +85,7 @@ import routes from '../js/routes'
 import { useUserStore } from '../js/user'
 import { useNotificacionesStore, iniciarManejoFCM } from '../js/useNotificaciones';
 import { solicitarPermisoNotificacion, escucharMensajes } from '../firebase/firebase';
-
+import AppAlert from '@/components/AppAlert.vue'
 
 const auth = getAuth()
 const userStore = useUserStore()

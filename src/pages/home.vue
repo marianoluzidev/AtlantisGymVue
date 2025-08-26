@@ -31,7 +31,7 @@
 
         <p v-else style="text-align: center; color: red;">Sin pagos registrados</p>
 
-        <button v-if="estado !== 'Al día'" class="btn-pagar" @click="window.location.href='https://mpago.la/1fd9U59'">PAGAR</button>
+        <button v-if="estado !== 'Al día'" class="btn-pagar" @click="irAPago">PAGAR</button>
       </div>
     </div>
 
@@ -149,6 +149,11 @@ export default {
       }
     }
 
+    const irAPago = async() => {
+      const mainView = f7.views.get('#view-home')
+      mainView?.router?.navigate('/pago/', { reloadCurrent: true })      
+    }
+
     return {
       isLoading,
       cliente,
@@ -157,7 +162,8 @@ export default {
       userId,
       version,
       appConfig,
-      ultimoPago
+      ultimoPago,
+      irAPago
     };
   }
 };

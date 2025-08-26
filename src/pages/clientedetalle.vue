@@ -106,6 +106,8 @@ import { doc, getDoc, collection, addDoc, getDocs, query, where, orderBy, update
 import { db } from '../firebase/firebase'; // Asegúrate de que la ruta sea correcta
 import { useUserStore } from '../js/user';
 import { useNotificacionesStore } from '../js/useNotificaciones';
+import { alert,confirm } from '../composables/useAlert'
+
 
 export default {
   props: {
@@ -125,7 +127,16 @@ export default {
     const notiStore = useNotificacionesStore();
 
     const asignarRutina = async (rutinaId) => {
-      if (confirm('¿Quiere asignar la rutina?')) {
+
+      const ok = await confirm({
+          title: 'Confirmar',
+          message: '¿Quiere asignar la rutina?',
+          type: 'warning',
+          confirmText: 'Sí',
+          cancelText: 'Cancelar',
+      });
+      
+      if (ok) {
         try {
           const clienteRef = doc(db, 'usuario', props.id);
           const clienteSnap = await getDoc(clienteRef);
@@ -160,14 +171,13 @@ export default {
               });
             }
 
-            alert('Rutina asignada con éxito.');
+            alert({title: 'Rutinas', message: 'Rutina asignada con éxito.', })
             showAssignPopup.value = false;
           } else {
-            alert('No se encontró el cliente.');
+            alert({message: 'No se encontró el cliente.'});
           }
-        } catch (error) {
-          console.error('Error al asignar la rutina:', error);
-          alert('Hubo un error al asignar la rutina.');
+        } catch (error) {          
+          alert({message:'Hubo un error al asignar la rutina.'});
         }
       }
     };
@@ -203,11 +213,18 @@ export default {
     const paymentAmount = ref(null); // Valor predeterminado
 
     const quitarRutina = async (rutinaId) => {
-      if (confirm('¿Desea quitar esta rutina?')) {
-        try {
-          const clienteRef = doc(db, 'usuario', props.id);
-          const clienteSnap = await getDoc(clienteRef);
-          if (clienteSnap.exists()) {
+       const ok = await confirm({
+          title: 'Confirmar',
+          message: '¿Desea quitar esta rutina?',
+          type: 'warning',
+          confirmText: 'Sí',
+          cancelText: 'Cancelar',
+       });
+       if (ok) {
+         try {
+           const clienteRef = doc(db, 'usuario', props.id);
+           const clienteSnap = await getDoc(clienteRef);
+           if (clienteSnap.exists()) {
             const clienteData = clienteSnap.data();
             const rutinasAsignadas = clienteData.rutinasAsignadas || [];
             const nuevasRutinas = rutinasAsignadas.filter(id => id !== rutinaId);
@@ -217,20 +234,19 @@ export default {
 
             // Actualizar en el frontend
             cliente.value.rutinas = cliente.value.rutinas.filter(rutina => rutina.id !== rutinaId);
-            alert('Rutina quitada con éxito.');
+            alert({message: 'Rutina quitada con éxito.'});
           } else {
-            alert('No se encontró el cliente.');
+            alert({message: 'No se encontró el cliente.'});
           }
         } catch (error) {
-          console.error('Error al quitar la rutina:', error);
-          alert('Hubo un error al quitar la rutina.');
+          alert({message: 'Hubo un error al quitar la rutina.'});
         }
       }
     };
 
     const registerPayment = async () => {
       if (!paymentAmount.value) {
-        alert('Por favor, seleccione un monto de pago.');
+        alert({message: 'Por favor, seleccione un monto de pago.'});
         return;
       }
         if (paymentDate.value) {
@@ -239,7 +255,7 @@ export default {
             
             // Validar que la fecha no sea mayor al día actual
             if (fechaPago > fechaActual) {
-                alert('No se pueden registrar pagos a futuro');
+                alert({message: 'No se pueden registrar pagos a futuro'});
                 return;
             }
 
@@ -271,16 +287,16 @@ export default {
                     return `${day}/${month}/${year}`;
                 };
 
-                alert(`Pago registrado con éxito para la fecha: ${formatFecha(fechaPago)}`);
+                alert({message: `Pago registrado con éxito para la fecha: ${formatFecha(fechaPago)}`});
                 paymentDate.value = null;
                 paymentAmount.value = null;
                 document.querySelector('input[placeholder="Fecha de pago"]').value = '';
             } catch (error) {
                 console.error('Error al registrar el pago:', error);
-                alert('Hubo un error al registrar el pago. Inténtelo nuevamente.');
+                alert({message: 'Hubo un error al registrar el pago. Inténtelo nuevamente.'});
             }
         } else {
-            alert('Por favor, seleccione una fecha antes de registrar el pago.');
+            alert({message: 'Por favor, seleccione una fecha antes de registrar el pago.'});
             return;
         }
         showPopup.value = false;
