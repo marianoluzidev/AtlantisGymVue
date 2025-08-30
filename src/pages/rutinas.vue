@@ -30,7 +30,7 @@
         Pedir nueva rutina
       </f7-button>
       <p v-if="!puedePedirRutina" class="text-color-gray text-align-center mt-2">
-        Solo podés solicitar una rutina cada 30 días.
+        Solo podés solicitar una rutina cada 40 días.
       </p>
     </f7-block>
   </f7-page>
@@ -64,7 +64,7 @@ export default {
           const fechaUltima = data.ultimaAsignacionRutina.toDate();
           const ahora = new Date();
           const dias = (ahora - fechaUltima) / (1000 * 60 * 60 * 24);          
-          puedePedirRutina.value = dias >= 30;          
+          puedePedirRutina.value = dias >= 40;          
         }
       }
     };

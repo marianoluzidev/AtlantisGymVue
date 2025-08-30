@@ -8,7 +8,9 @@
     <div v-if="cliente" class="bienvenida-cliente">
       <div class="card">
         <div class="card-content card-content-padding">
-          <h2>{{cliente.apellido}}, {{ cliente.nombre }}</h2>
+          <h2>{{ cliente.apellido }}, {{ cliente.nombre }}</h2>
+
+          <!-- Primera fila con info -->
           <div class="info-cliente">
             <div class="info-box">
               <div class="info-label">Peso</div>
@@ -21,6 +23,19 @@
             <div class="info-box">
               <div class="info-label">Objetivo</div>
               <div class="info-value">{{ cliente.objetivo }}</div>
+            </div>
+          </div>
+
+          <!-- Bloque extra abajo -->
+          <div class="info-extra">
+            <div class="info-item">
+              <strong>Teléfono:</strong> {{ cliente.telefono }}
+            </div>
+            <div class="info-item">
+              <strong>Dirección:</strong> {{ cliente.direccion }}
+            </div>
+            <div class="info-item">
+              <strong>Fecha de Nacimiento:</strong> {{ cliente.fechaNacimiento }}
             </div>
           </div>
         </div>
@@ -199,6 +214,19 @@ export default {
         console.error('Error al cargar rutinas disponibles:', error);
       }
     };
+
+    const formatDateAR = (value) => {
+      if (!value) return ''
+      // Firestore Timestamp
+      if (value?.toDate) {
+        const d = value.toDate()
+        return d.toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Cordoba' })
+      }
+      // String o Date
+      const d = new Date(value)
+      if (isNaN(d)) return ''
+      return d.toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Cordoba' })
+    }
   
     onMounted(() => {
       cargarRutinasDisponibles();
@@ -226,6 +254,7 @@ export default {
            const clienteSnap = await getDoc(clienteRef);
            if (clienteSnap.exists()) {
             const clienteData = clienteSnap.data();
+            
             const rutinasAsignadas = clienteData.rutinasAsignadas || [];
             const nuevasRutinas = rutinasAsignadas.filter(id => id !== rutinaId);
 
@@ -302,6 +331,15 @@ export default {
         showPopup.value = false;
     };
 
+    const formatFecha = (timestamp) => {
+      if (!timestamp) return 'Fecha no disponible';
+      const date = new Date(timestamp);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
+    
     onMounted(async () => {
         const clienteRef = doc(db, 'usuario', props.id);
         try {
@@ -309,8 +347,16 @@ export default {
             const clienteSnap = await getDoc(clienteRef);
             if (clienteSnap.exists()) {
                 cliente.value = clienteSnap.data();                
-
-                // Obtener el último pago del cliente
+                if (clienteSnap.exists()) {
+                  const data = clienteSnap.data()
+                  cliente.value = {
+                    ...data,
+                    // ⬇️ La fecha ya queda lista en dd/mm/aaaa para toda la vista
+                    fechaNacimiento: formatDateAR(data.fechaNacimiento),
+                  }
+              }
+              
+                  // Obtener el último pago del cliente
                 const pagosQuery = query(
                     collection(db, 'pago'),
                     where('usuarioId', '==', props.id),
@@ -421,4 +467,14 @@ export default {
   justify-content: center;
   gap: 10px;
 }
+.info-extra {
+  margin-top: 1rem;
+}
+
+.info-item {
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #333;
+}
+
 </style>
