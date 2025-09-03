@@ -31,7 +31,7 @@
 
         <p v-else style="text-align: center; color: red;">Sin pagos registrados</p>
 
-        <button v-if="estado !== 'Al día'" class="btn-pagar" @click="window.location.href='https://mpago.la/1fd9U59'">PAGAR</button>
+        <button v-if="estado !== 'Al día'" class="btn-pagar" @click="irAPago">PAGAR</button>
       </div>
     </div>
 
@@ -77,13 +77,13 @@ export default {
 
     watch(
       () => userStore.user,
-      async (newUser) => {
-        if (newUser?.uid && !cargandoDatos.value) {
+      async (newUser, oldUser) => {
+        if (newUser?.uid && newUser.uid !== oldUser?.uid && !cargandoDatos.value) {
           cargandoDatos.value = true;
           try {
             const userRef = doc(db, 'usuario', newUser.uid);
             const userSnap = await getDoc(userRef);
-
+    
             if (userSnap.exists()) {
               const data = userSnap.data();
               userStore.setUser({ uid: newUser.uid, email: newUser.email, ...data });
@@ -96,27 +96,29 @@ export default {
           }
         } else if (!newUser?.uid) {
           // limpieza por seguridad
-          ultimoPago.value = null;
-          estado.value = 'Al día';
-          f7.views.main.router.navigate('/login/');
+          if (ultimoPago.value || estado.value !== 'Al día') {
+            ultimoPago.value = null;
+            estado.value = 'Al día';
+            f7.views.main.router.navigate('/login/');
+          }
         }
       },
       { immediate: true }
     );
-
-    watch(userId, async (newUid) => {
-      if (newUid) {
+    
+    watch(userId, async (newUid, oldUid) => {
+      if (newUid && newUid !== oldUid) {
         try {
           const pagosRef = collection(db, 'pago');
           const q = query(pagosRef, where('usuarioId', '==', newUid), orderBy('fechaPago', 'desc'), limit(1));
           const querySnapshot = await getDocs(q);
-
+    
           if (!querySnapshot.empty) {
             ultimoPago.value = querySnapshot.docs[0].data();
             const fechaPago = new Date(ultimoPago.value.fechaPago?.seconds * 1000);
             const fechaVencimiento = new Date(ultimoPago.value.fechaVencimiento?.seconds * 1000);
             const hoy = new Date();
-
+    
             estado.value = hoy >= fechaPago && hoy <= fechaVencimiento ? 'Al día' : 'Pago vencido';
           } else {
             ultimoPago.value = null;
@@ -125,10 +127,6 @@ export default {
         } catch (error) {
           console.error('Error al obtener el último pago:', error);
         }
-      } else {
-        // limpieza si se pierde userId
-        ultimoPago.value = null;
-        estado.value = 'Pago vencido';
       }
     }, { immediate: true });
 
@@ -151,6 +149,11 @@ export default {
       }
     }
 
+    const irAPago = async() => {
+      const mainView = f7.views.get('#view-home')
+      mainView?.router?.navigate('/pago/', { reloadCurrent: true })      
+    }
+
     return {
       isLoading,
       cliente,
@@ -159,7 +162,8 @@ export default {
       userId,
       version,
       appConfig,
-      ultimoPago
+      ultimoPago,
+      irAPago
     };
   }
 };

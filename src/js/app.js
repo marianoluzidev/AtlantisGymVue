@@ -23,6 +23,23 @@ f7ready(() => {
   const store = useUserStore();
   store.initAuth();
 
+    // Auto-update + recarga al activar nueva versión
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js').then((reg) => {
+        if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          window.location.reload();
+        });
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') reg.update();
+        });
+      });
+    });
+  }
+
   let currentTab = 'view-home'; // tab inicial por defecto
 
   f7.on('tabShow', (tabEl) => {

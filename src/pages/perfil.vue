@@ -73,6 +73,7 @@ import { useUserStore } from '../js/user'
 import { ref } from 'vue';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
+import { alert,confirm } from '../composables/useAlert'
 
 export default {
   setup() {
@@ -132,11 +133,11 @@ export default {
           ...userStore.user,
           ...updatedData
         };
-        
-        f7.dialog.alert('Datos actualizados correctamente');
+                
+        alert({message: 'Datos actualizados correctamente'});
       } catch (error) {
         console.error('Error al actualizar los datos:', error);
-        f7.dialog.alert('Hubo un error al actualizar los datos');
+        alert({message: 'Hubo un error al actualizar los datos'});
       }
     };
 

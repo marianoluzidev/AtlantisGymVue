@@ -30,7 +30,7 @@
         Pedir nueva rutina
       </f7-button>
       <p v-if="!puedePedirRutina" class="text-color-gray text-align-center mt-2">
-        Solo podés solicitar una rutina cada 30 días.
+        Solo podés solicitar una rutina cada 40 días.
       </p>
     </f7-block>
   </f7-page>
@@ -43,6 +43,7 @@ import { useNotificacionesStore } from '../js/useNotificaciones';
 import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { f7 } from 'framework7-vue';
+import { alert,confirm } from '../composables/useAlert'
 
 export default {
   setup() {
@@ -63,7 +64,7 @@ export default {
           const fechaUltima = data.ultimaAsignacionRutina.toDate();
           const ahora = new Date();
           const dias = (ahora - fechaUltima) / (1000 * 60 * 60 * 24);          
-          puedePedirRutina.value = dias >= 30;          
+          puedePedirRutina.value = dias >= 40;          
         }
       }
     };
@@ -125,8 +126,8 @@ export default {
     
     const pedirNuevaRutina = async () => {
     const user = userStore.user;
-    if (!user || !user.uid) {
-      f7.dialog.alert('Error: usuario no autenticado.');
+    if (!user || !user.uid) {      
+      alert({message: 'Error: usuario no autenticado.'});
       return;
     }
 
@@ -144,11 +145,11 @@ export default {
           tipo: 'admin'
         });
       }));
-
-      f7.dialog.alert('La solicitud fue enviada a los administradores.');
+      
+      alert({message: 'La solicitud fue enviada a los administradores.'});
     } catch (error) {
       console.error('Error al enviar notificaciones:', error);
-      f7.dialog.alert('Hubo un error al enviar la solicitud.');
+      alert({message: 'Hubo un error al enviar la solicitud.'});
     }
   };
 

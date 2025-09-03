@@ -28,6 +28,7 @@ import { f7 } from 'framework7-vue';
 import { useUserStore } from '../js/user';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { appConfig } from '../js/config';
+import { alert,confirm } from '../composables/useAlert'
 
 export default {  
   data() {
@@ -44,8 +45,8 @@ export default {
         await store.login(this.email, this.password);
         f7.views.main.router.navigate('/');
       } catch (error) {
-        console.log(error);
-        f7.dialog.alert('Error al iniciar sesión. Verifica tus credenciales.');
+        console.log(error);        
+        alert({message: 'Error al iniciar sesión. Verifica tus credenciales.'});
       }
     },
     signup() {
@@ -100,7 +101,7 @@ export default {
         }
       } catch (error) {
         console.error("Error al iniciar sesión con Google:", error);
-        f7.dialog.alert('No se pudo iniciar sesión con Google.');
+        alert({message: 'No se pudo iniciar sesión con Google.'});
       }
     }
   }

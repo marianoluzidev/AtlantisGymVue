@@ -24,6 +24,9 @@ export const useUserStore = defineStore('user', () => {
       peso: data.peso || '',
       altura: data.altura || '',
       objetivo: data.objetivo || '',
+      telefono: data.telefono || '',
+      fechaNacimiento: data.fechaNacimiento || '',
+      direccion: data.direccion || '',
       admin: data.admin || false
     };
   };
@@ -37,7 +40,7 @@ export const useUserStore = defineStore('user', () => {
 
       const userRef = doc(db, 'usuario', uid);
       const userSnap = await getDoc(userRef);
-
+      console.log('Usuario encontrado:', userSnap.data());
       if (userSnap.exists()) {
         const data = userSnap.data();
         setUser({
@@ -64,7 +67,7 @@ export const useUserStore = defineStore('user', () => {
         const userRef = doc(db, 'usuario', uid);
         const userSnap = await getDoc(userRef);
         const userData = userSnap.exists() ? userSnap.data() : {};
-        
+                
         setUser({
           uid,
           email: firebaseUser.email,

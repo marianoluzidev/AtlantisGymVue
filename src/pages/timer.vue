@@ -4,10 +4,42 @@
 
     <f7-block-title>Configuración</f7-block-title>
     <f7-list form>
-      <f7-list-input label="Prep (segundos)" type="number" v-model.number="prep" />
-      <f7-list-input label="Trabajo (segundos)" type="number" v-model.number="trabajo" />
-      <f7-list-input label="Descanso (segundos)" type="number" v-model.number="descanso" />
-      <f7-list-input label="Ciclos" type="number" v-model.number="ciclos" />
+      <f7-list-input
+        label="Prep (segundos)"
+        type="number"
+        :value="prep"
+        inputmode="numeric"
+        pattern="\d*"
+        @input="prep = $event?.target?.valueAsNumber ?? Number($event?.target?.value || 0)"
+      />
+
+      <f7-list-input
+        label="Trabajo (segundos)"
+        type="number"
+        :value="trabajo"
+        inputmode="numeric"
+        pattern="\d*"
+        @input="trabajo = $event?.target?.valueAsNumber ?? Number($event?.target?.value || 0)"
+      />
+
+      <f7-list-input
+        label="Descanso (segundos)"
+        type="number"
+        :value="descanso"
+        inputmode="numeric"
+        pattern="\d*"
+        @input="descanso = $event?.target?.valueAsNumber ?? Number($event?.target?.value || 0)"
+      />
+
+      <f7-list-input
+        label="Ciclos"
+        type="number"
+        :value="ciclos"
+        inputmode="numeric"
+        pattern="\d*"
+        @input="ciclos = $event?.target?.valueAsNumber ?? Number($event?.target?.value || 0)"
+      />
+
     </f7-list>
 
     <div style="display: flex; justify-content: center;">
@@ -48,21 +80,25 @@
     </f7-popup>
 
     <!-- Audios -->
-    <audio ref="prepSound" src="/sounds/prep.mp3" preload="auto"></audio>
-    <audio ref="trabajoSound" src="/sounds/trabajo.mp3" preload="auto"></audio>
-    <audio ref="descansoSound" src="/sounds/descanso.mp3" preload="auto"></audio>
+    <audio ref="prepSound" src="/sounds/tick.mp3" preload="auto"></audio>
+    <audio ref="trabajoSound" src="/sounds/tick.mp3" preload="auto"></audio>
+    <audio ref="descansoSound" src="/sounds/tick.mp3" preload="auto"></audio>
     <audio ref="finalSound" src="/sounds/final.mp3" preload="auto"></audio>
+    <!-- NUEVOS -->
+    <audio ref="trabajoInicioSound" src="/sounds/whistle.mp3" preload="auto"></audio>
+    <audio ref="trabajoFinSound" src="/sounds/work_end.mp3" preload="auto"></audio>
   </f7-page>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { f7, f7ready } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
+import { alert,confirm } from '../composables/useAlert'
 
-const prep = ref(10)
+const prep = ref(5)
 const trabajo = ref(30)
 const descanso = ref(10)
-const ciclos = ref(4)
+const ciclos = ref(1)
 
 const tiempoRestante = ref(0)
 const estadoActual = ref('Prep')
@@ -76,13 +112,17 @@ const prepSound = ref(null)
 const trabajoSound = ref(null)
 const descansoSound = ref(null)
 const finalSound = ref(null)
+const trabajoInicioSound = ref(null)  // NUEVO
+const trabajoFinSound = ref(null)      // NUEVO
 
 const comenzarTimer = () => {
-  console.log('Por favor completá todos los campos con valores mayores a 0.',prep.value)
   if (prep.value <= 0 || trabajo.value <= 0 || descanso.value <= 0 || ciclos.value <= 0) {    
-      f7.dialog.alert('Por favor completá todos los campos con valores mayores a 0.')    
+    alert({message: 'Por favor completá todos los campos con valores mayores a 0.'});
     return
   }
+  // "prime" ligero para móviles (opcional)
+  ;[prepSound.value, trabajoSound.value, descansoSound.value, finalSound.value, trabajoInicioSound.value, trabajoFinSound.value]
+    .forEach(a => a && a.load())
 
   estadoActual.value = 'Prep'
   tiempoRestante.value = prep.value
@@ -93,9 +133,7 @@ const comenzarTimer = () => {
   iniciarCuentaRegresiva()
 }
 
-const togglePausa = () => {
-  enPausa.value = !enPausa.value
-}
+const togglePausa = () => { enPausa.value = !enPausa.value }
 
 const cancelarTimer = () => {
   clearInterval(intervalo.value)
@@ -111,18 +149,35 @@ const resetTimer = () => {
   enPausa.value = false
 }
 
+const terminarTimer = () => {
+  estadoActual.value = '¡Finalizado!'
+  tiempoRestante.value = 0
+  colorActual.value = 'gray'
+  reproducirSonido('Final')      // si tenés el sonido final
+  clearInterval(intervalo.value)
+  setTimeout(() => {
+    f7.popup.close('#popup-timer')
+    resetTimer()
+  }, 4000)
+}
+
 const reproducirSonido = (estado) => {
   const sonidos = {
-    Prep: prepSound.value,
-    Trabajo: trabajoSound.value,
-    Descanso: descansoSound.value,
-    Final: finalSound.value,
+    Prep: prepSound.value,          // beeps 3-2-1 de prep
+    Trabajo: trabajoSound.value,    // beeps 3-2-1 de trabajo
+    Descanso: descansoSound.value,  // beeps 3-2-1 de descanso
+    Final: finalSound.value,        // campana final
+    TrabajoInicio: trabajoInicioSound.value, // NUEVO: silbato al empezar trabajo
+    TrabajoFin: trabajoFinSound.value,       // NUEVO: beep fin de trabajo
   }
-
   const sonido = sonidos[estado]
   if (sonido) {
-    sonido.currentTime = 0
-    sonido.play()
+    try {
+      sonido.currentTime = 0
+      sonido.play()
+    } catch (e) {
+      // ignore
+    }
   }
 }
 
@@ -131,6 +186,7 @@ const iniciarCuentaRegresiva = () => {
   intervalo.value = setInterval(() => {
     if (enPausa.value) return
 
+    // últimos 3 segundos de cada fase (menos el FIN)
     if (tiempoRestante.value <= 3 && tiempoRestante.value > 0) {
       reproducirSonido(estadoActual.value)
     }
@@ -139,32 +195,37 @@ const iniciarCuentaRegresiva = () => {
       tiempoRestante.value--
     } else {
       if (estadoActual.value === 'Prep') {
+        // Empieza TRABAJO
         estadoActual.value = 'Trabajo'
         tiempoRestante.value = trabajo.value
         colorActual.value = 'green'
+        reproducirSonido('TrabajoInicio') // <- si agregaste el silbato
       } else if (estadoActual.value === 'Trabajo') {
-        estadoActual.value = 'Descanso'
-        tiempoRestante.value = descanso.value
-        colorActual.value = 'blue'
-      } else if (estadoActual.value === 'Descanso') {
+        // Termina TRABAJO: ¿hay más ciclos?
+        reproducirSonido('TrabajoFin')    // <- si agregaste sonido de fin de trabajo
+
         if (cicloActual.value < ciclos.value) {
-          cicloActual.value++
-          estadoActual.value = 'Trabajo'
-          tiempoRestante.value = trabajo.value
-          colorActual.value = 'green'
+          // Aún quedan ciclos → DESCANSO
+          estadoActual.value = 'Descanso'
+          tiempoRestante.value = descanso.value
+          colorActual.value = 'blue'
         } else {
-          estadoActual.value = '¡Finalizado!'
-          tiempoRestante.value = 0
-          colorActual.value = 'gray'
-          reproducirSonido('Final')
-          clearInterval(intervalo.value)
-          setTimeout(() => {
-            f7.popup.close('#popup-timer')
-            resetTimer()
-          }, 4000)
+          // Era el ÚLTIMO trabajo del ÚLTIMO ciclo → FIN (sin descanso)
+          terminarTimer()
         }
+
+      } else if (estadoActual.value === 'Descanso') {
+        // Descanso SIEMPRE es intermedio (porque el último ya terminó arriba)
+        cicloActual.value++
+        estadoActual.value = 'Trabajo'
+        tiempoRestante.value = trabajo.value
+        colorActual.value = 'green'
+        reproducirSonido('TrabajoInicio') // <- si agregaste el silbato
       }
     }
+
+
+
   }, 1000)
 }
 </script>
@@ -181,21 +242,10 @@ const iniciarCuentaRegresiva = () => {
   justify-content: center;
   animation: pulse 1s infinite;
 }
-
-.circle-content {
-  font-size: 48px;
-  font-weight: bold;
-}
-
+.circle-content { font-size: 48px; font-weight: bold; }
 @keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(0, 128, 0, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 20px rgba(0, 128, 0, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(0, 128, 0, 0);
-  }
+  0% { box-shadow: 0 0 0 0 rgba(0, 128, 0, 0.4); }
+  70% { box-shadow: 0 0 0 20px rgba(0, 128, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 128, 0, 0); }
 }
 </style>
